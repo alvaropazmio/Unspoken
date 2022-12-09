@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 0
+    path: Assets/Scenes/_test_ARScene_forBottles.unity
+    guid: f45408d8ceb1cc44bae7d6d3357adfd5
+  - enabled: 0
+    path: Assets/Scenes/_test_AR.unity
+    guid: 68142d51cba004f44bc293949b455d73
+  - enabled: 0
+    path: Assets/Scenes/test_ARMesh.unity
+    guid: 36acb447c3a400b4ca1b4ac8abdeeef4
+  - enabled: 1
+    path: Assets/Scenes/_test_Plane.unity
+    guid: a540d3dafba98c440ad5d0536bd0b47b
   m_configObjects: {}
