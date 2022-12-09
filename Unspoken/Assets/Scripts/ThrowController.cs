@@ -6,7 +6,7 @@ public class ThrowController : MonoBehaviour
 {
     public GameObject _ballPrefab;  //This will store the Ball Prefab we created earlier, so we can spawn a new Ball whenever we want
     public Camera _mainCamera;  //This will reference the MainCamera in the scene, so the ARDK can leverage the device camera
-
+    public float force = 300.0f;
     //This function will be called when the player touches the screen. For us, we'll have this trigger the shooting of our ball from where we touch.
 
     //private void Update()
@@ -27,12 +27,15 @@ public class ThrowController : MonoBehaviour
         //Add velocity to our Ball, here we're telling the game to put Force behind the Ball in the direction Forward from our Camera (so, straight ahead)
         Rigidbody rigbod = newBall.GetComponent<Rigidbody>();
         rigbod.velocity = new Vector3(0f, 0f, 0f);
-        float force = 300.0f;
+
         rigbod.AddForce(_mainCamera.transform.forward * force);
     }
     public void SayHi()
     {
 
+
+
         Debug.Log("hi");
+        
     }
 }
