@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 8c45b57a9d8af68469815072d8048b11
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _ballPrefab: {instanceID: 0}
+  - _mainCamera: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

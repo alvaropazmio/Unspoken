@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 5031774155029388931}
   - component: {fileID: 3491553320536466252}
   - component: {fileID: 1966511211880777036}
-  - component: {fileID: 8520752733392627315}
   m_Layer: 0
   m_Name: Bottle
   m_TagString: Bottle
@@ -35,6 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5061338623562553692}
+  - {fileID: 7265005202621645432}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -114,19 +114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.06
---- !u!114 &8520752733392627315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391029338446301491}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55ed25798c11d91428dde64ee4fa653c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 0.06
 --- !u!1001 &4735471047658471095
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -144,7 +131,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 413f0ea93adf48b4f83a2cc152874822, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.0098
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 413f0ea93adf48b4f83a2cc152874822, type: 3}
       propertyPath: m_LocalPosition.z
@@ -194,6 +181,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BottleMesh
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 413f0ea93adf48b4f83a2cc152874822, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6349218758252090772, guid: 413f0ea93adf48b4f83a2cc152874822, type: 3}
       propertyPath: m_BlendShapeWeights.Array.size
       value: 3
@@ -234,6 +225,68 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1001 &7158685737714296211
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4016016006485463945}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+      propertyPath: m_Name
+      value: BottleAnimations
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+--- !u!4 &7265005202621645432 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
+  m_PrefabInstance: {fileID: 7158685737714296211}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7498762744953633948
 PrefabInstance:
   m_ObjectHideFlags: 0
