@@ -858,7 +858,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1681789963}
         m_TargetAssemblyTypeName: SelectOnTouch, Assembly-CSharp
-        m_MethodName: ThrowBottleBack
+        m_MethodName: DeactivateBottle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -879,6 +879,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 334349580}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &279157739
 MonoBehaviour:
@@ -928,6 +940,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3381041692372307289, guid: e91d6d15f11cc4ad29bb1a41ae9aa381, type: 3}
   m_PrefabInstance: {fileID: 1032552967}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &781835949
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 781835950}
+  m_Layer: 0
+  m_Name: BottleDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &781835950
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781835949}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 559745067}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &837454700
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,7 +1139,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42360c9944fa7f24a91a2cc58dc8a45b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnClickedBottle:
+  OnBottleClicked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 334349580}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnOpenBottle:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1274984463}
@@ -1112,7 +1170,9 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   bottleStorage: {fileID: 837454701}
+  bottleDisplay: {fileID: 781835949}
   bottlePrefab: {fileID: 4391029338446301491, guid: b7a9ce14435e4184f898871b87e3a038, type: 3}
+  selectedBottle: {fileID: 0}
   thrust: 100
 --- !u!1 &2099034613
 GameObject:

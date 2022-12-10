@@ -30,6 +30,8 @@ public class MockupUIManager : MonoBehaviour
     int touchCount = 0;
     bool welcome = true;
     bool scanning = false;
+
+
     private void Awake()
     {
         welcomeCanvasGroup = welcomeCanvas.GetComponent<CanvasGroup>();
