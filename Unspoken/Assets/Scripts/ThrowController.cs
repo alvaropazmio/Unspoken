@@ -5,18 +5,14 @@ using UnityEngine;
 public class ThrowController : MonoBehaviour
 {
     public GameObject _ballPrefab;  //This will store the Ball Prefab we created earlier, so we can spawn a new Ball whenever we want
-    public Camera _mainCamera;  //This will reference the MainCamera in the scene, so the ARDK can leverage the device camera
+    private Camera _mainCamera;  //This will reference the MainCamera in the scene, so the ARDK can leverage the device camera
     public float force = 300.0f;
     //This function will be called when the player touches the screen. For us, we'll have this trigger the shooting of our ball from where we touch.
 
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown("space"))
-    //    {
-    //        SayHi();
-    //        ThrowObjects(); 
-    //    }
-    //}
+    public void Start()
+    {
+        _mainCamera = Camera.main;
+    }
     public void ThrowObjects()
     {
         //Let's spawn a new ball to bounce around our space

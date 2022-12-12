@@ -5,16 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/test_ARMesh.unity
-    guid: 36acb447c3a400b4ca1b4ac8abdeeef4
-  - enabled: 0
     path: Assets/Scenes/PlaneSetup.unity
     guid: a540d3dafba98c440ad5d0536bd0b47b
   m_configObjects: {}

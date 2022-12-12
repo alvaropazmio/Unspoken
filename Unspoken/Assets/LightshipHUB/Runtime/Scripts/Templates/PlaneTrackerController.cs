@@ -11,6 +11,7 @@ using Niantic.ARDK.Utilities.Input.Legacy;
 
 namespace Niantic.LightshipHub.Templates
 {
+
   public class PlaneTrackerController : MonoBehaviour
   {
     [HideInInspector]
@@ -28,7 +29,10 @@ namespace Niantic.LightshipHub.Templates
     private Vector3 planeNormal;
     private Quaternion currentRotation;
 
-    void Awake()
+
+        public float planeSpeed = 1f;
+
+        void Awake()
     {
       if (!ShowPlaneHelper) PlaneManager.PlanePrefab = null;
     }
@@ -66,7 +70,7 @@ namespace Niantic.LightshipHub.Templates
     {
       if (!_animationRunning) return;
 
-      float speed = 1.0f;
+      float speed = planeSpeed;
       float step = speed * Time.deltaTime;
       Vector3 direction = (_targetPosition - OHcontroller.ObjectHolder.transform.position).normalized;
       OHcontroller.ObjectHolder.transform.Translate(Vector3.forward * step, Space.Self);
