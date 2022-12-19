@@ -8,6 +8,7 @@ TagManager:
   - BlueGoal
   - Encounter
   - Bottle
+  - ARButton
   layers:
   - Default
   - TransparentFX

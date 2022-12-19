@@ -207,18 +207,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1681789963}
-        m_TargetAssemblyTypeName: SelectOnTouch, Assembly-CSharp
-        m_MethodName: ThrowBottleBack
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1363388503}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -235,6 +223,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1681789965}
+        m_TargetAssemblyTypeName: BottleManager, Assembly-CSharp
+        m_MethodName: CreateNewBottle
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -651,35 +651,107 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
-      propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
-      value: 6
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.size
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_Target
+      value: 
+      objectReference: {fileID: 1681789965}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
-      objectReference: {fileID: 1681789963}
+      objectReference: {fileID: 1681789965}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 1681789965}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
+      value: ChangeState
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: set_enabled
+      value: ChangeState
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: ChangeState
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_TargetAssemblyTypeName
+      value: BottleManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
-      value: UnityEngine.Behaviour, UnityEngine
+      value: BottleManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
+      value: BottleManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_BoolArgument
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_Arguments.m_StringArgument
+      value: ScanMain
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_StringArgument
+      value: MainGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_StringArgument
+      value: ScanTerrain
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnFirstTouch.m_PersistentCalls.m_Calls.Array.data[4].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: OnThirdTouch.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843421190186794, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: OnSecondTouch.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8436843421190186795, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
@@ -744,27 +816,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
-      objectReference: {fileID: 1681789957}
+      objectReference: {fileID: 1681789965}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: set_enabled
+      value: ChangeState
       objectReference: {fileID: 0}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
-      value: UnityEngine.Behaviour, UnityEngine
+      value: BottleManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_BoolArgument
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_StringArgument
+      value: Welcome
       objectReference: {fileID: 0}
     - target: {fileID: 8436843422576037454, guid: e41f5c111b0ec8b41b59b23ecc786817, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -856,7 +932,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1681789963}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectOnTouch, Assembly-CSharp
         m_MethodName: DeactivateBottle
         m_Mode: 1
@@ -950,7 +1026,7 @@ GameObject:
   m_Component:
   - component: {fileID: 781835950}
   m_Layer: 0
-  m_Name: BottleDisplay
+  m_Name: BottleDisplayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1084,21 +1160,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7315055104982771470, guid: e91d6d15f11cc4ad29bb1a41ae9aa381, type: 3}
   m_PrefabInstance: {fileID: 1032552967}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1681789957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1681789956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33f93328213642343a7b56e075af0be7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bottlePrefab: {fileID: 4391029338446301491, guid: b7a9ce14435e4184f898871b87e3a038, type: 3}
-  bottleCount: 10
-  thrust: 150
 --- !u!114 &1681789958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1114,7 +1175,7 @@ MonoBehaviour:
   _manageUsingUnityLifecycle: 1
   _planePrefab: {fileID: 1092543363889104, guid: a9d37abf22bb466428c5c29a2231d142, type: 3}
   _detectedPlaneTypes: 3
---- !u!114 &1681789959
+--- !u!114 &1681789965
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1123,57 +1184,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1681789956}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 544755552afaf4436af235f6de9be0b1, type: 3}
+  m_Script: {fileID: 11500000, guid: da8e67f0cb3a9bd4b9be3c2837da3a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _permissions: 00000000
---- !u!114 &1681789963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1681789956}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42360c9944fa7f24a91a2cc58dc8a45b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnBottleClicked:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 334349580}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnOpenBottle:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1274984463}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  bottleStorage: {fileID: 837454701}
-  bottleDisplay: {fileID: 781835949}
   bottlePrefab: {fileID: 4391029338446301491, guid: b7a9ce14435e4184f898871b87e3a038, type: 3}
-  selectedBottle: {fileID: 0}
-  thrust: 100
+  bottleStorage: {fileID: 837454701}
+  bottleDisplayer: {fileID: 781835949}
+  bottleCount: 10
+  thrust: 200
+  currentState: 0
 --- !u!1 &2099034613
 GameObject:
   m_ObjectHideFlags: 0

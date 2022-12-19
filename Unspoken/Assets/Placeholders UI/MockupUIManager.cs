@@ -46,8 +46,6 @@ public class MockupUIManager : MonoBehaviour
 
         if (OnThirdTouch == null) OnThirdTouch = new UnityEvent();
 
-        //if (OnForthTouch == null) OnForthTouch = new UnityEvent();
-        //OnForthTouch.AddListener(Reset);
     }
 
     private void TurnOffWelcomeCanvas()
@@ -67,6 +65,8 @@ public class MockupUIManager : MonoBehaviour
         if (!welcome)
         {
             welcomeCanvasGroup.alpha -= Time.deltaTime;
+            if (welcomeCanvasGroup.alpha <= 0)
+                welcomeCanvas.SetActive(false);
         }
         if (scanning && welcomeCanvasGroup.alpha == 0)
         {
