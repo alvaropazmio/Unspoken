@@ -56,14 +56,6 @@ public class BottleManager : MonoBehaviour
         for (int i = 0; i < bottleCount; i++)
         {
             CreateNewBottle();
-            /*
-            var newGO = Instantiate(bottlePrefab, Vector3.zero, Quaternion.identity);
-            Bottle newBottle = newGO.GetComponent<Bottle>();
-
-            bottlePool.Add(newBottle);
-            bottleDictionary.Add(newGO, newBottle);
-            newBottle.gameObject.SetActive(false);
-            */
         }
 
     }

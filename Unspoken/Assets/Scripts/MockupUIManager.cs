@@ -15,17 +15,13 @@ public class MockupUIManager : MonoBehaviour
 
     [SerializeField]
     GameObject scanningCanvas;
-    /*
-    [SerializeField]
-    GameObject mainGameCanvas;
-    */
+
     private CanvasGroup welcomeCanvasGroup;
     private CanvasGroup scanningCanvasGroup;
 
     public UnityEvent OnFirstTouch;
     public UnityEvent OnSecondTouch;
     public UnityEvent OnThirdTouch;
-    //UnityEvent OnForthTouch;
 
     int touchCount = 0;
     bool welcome = true;

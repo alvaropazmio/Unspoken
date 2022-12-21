@@ -1,3 +1,4 @@
+//Deprecated, use BottleManager.cs
 using Niantic.ARDK.Utilities.Input.Legacy;
 using System.Collections;
 using System.Collections.Generic;

@@ -1,3 +1,4 @@
+// Deprecated, use Bottle.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class BottleBehaivor : MonoBehaviour
 
     private Transform displayPoint;
     private Animator animator;
-    private Rigidbody rigidbody;
+    //private Rigidbody rigidbody;
     //[SerializeField]
     private float velocity = 0.2f;
     private float movementSpeed = 0.06f;
@@ -17,15 +18,15 @@ public class BottleBehaivor : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        rigidbody = GetComponent<Rigidbody>();
+        //rigidbody = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
         if (moveTowardsPlayer)
         {
-            rigidbody.isKinematic = true;
-            rigidbody.useGravity = false;
+            //rigidbody.isKinematic = true;
+            //rigidbody.useGravity = false;
             transform.position = Vector3.MoveTowards(transform.position, displayPoint.position, velocity);
 
             float distance = Vector3.Distance(transform.position, displayPoint.position);
@@ -64,8 +65,8 @@ public class BottleBehaivor : MonoBehaviour
 
     public void ReadyToThrowBack()
     {
-        rigidbody.isKinematic = false;
-        rigidbody.useGravity = true;
+        //rigidbody.isKinematic = false;
+        //rigidbody.useGravity = true;
         BottleAnimationActions.OnBottleClosed();
     }
 }
