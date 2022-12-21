@@ -25,7 +25,10 @@ public class Bottle : MonoBehaviour
 
     private enum State { Idle, Open, Display, Close, Throw}
     [SerializeField]
-    private State currentState;  
+    private State currentState;
+
+    //public delegate void WayspotCreator(Matrix4x4 localPose);
+    //public event WayspotCreator WayspotCreated;
 
     private void Awake()
     {
@@ -62,6 +65,17 @@ public class Bottle : MonoBehaviour
                 break;
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Plane")
+        {
+            //CreateWayspot(out Matrix4x4 localPose);
+            //WayspotCreated.Invoke(localPose);
+            BottleActions.OnBottleCreated(this);
+        }
+    }
+
     private void MoveTowardsPlayer()
     {
         rigidBody.isKinematic = true;
@@ -113,4 +127,15 @@ public class Bottle : MonoBehaviour
 
         currentState = newState;
     }
+    /*
+    private void CreateBottleMatrix(out Matrix4x4 localPose)
+    {
+        localPose =
+            Matrix4x4.TRS
+            (
+                transform.position,
+                transform.rotation,
+                transform.localScale
+            );
+    }*/
 }
