@@ -167,6 +167,8 @@ public class WaySpotAnchorManager : MonoBehaviour
         tracker.AttachAnchor(anchor);
         _wayspotAnchorTrackers.Add(tracker);
 
+        BottleActions.OnBottleLoaded(go);
+
         return go;
     }
 
@@ -174,6 +176,7 @@ public class WaySpotAnchorManager : MonoBehaviour
     public void RestartWayspotAnchorService()
     {
         wayspotAnchorService.Restart();
+        WayspotAnchorDataUtility.ClearLocalPayloads();
 
         UpdateLocalisationStatus("Wayspot Anchor Service Restarted");
     }

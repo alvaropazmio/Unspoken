@@ -65,13 +65,14 @@ public class BottleManager : MonoBehaviour
     private void OnEnable()
     {
         //BottleActions.OnBottleLoaded += CreateNewBottle;
-
+        BottleActions.OnBottleLoaded += RegisterBottle;
 
     }
 
     private void OnDisable()
     {
         //BottleActions.OnBottleLoaded -= CreateNewBottle;
+        BottleActions.OnBottleLoaded -= RegisterBottle;
     }
 
     private void Start()
@@ -83,7 +84,6 @@ public class BottleManager : MonoBehaviour
 
     public void CreateNewBottle()
     {
-
         var go = Instantiate(bottlePrefab, Vector3.zero, Quaternion.identity);
 
         Bottle newBottle = go.GetComponent<Bottle>();
@@ -102,7 +102,13 @@ public class BottleManager : MonoBehaviour
 
     }
 
+    private void RegisterBottle(GameObject bottleGO)
+    {
+        Bottle bottle = bottleGO.GetComponent<Bottle>();
 
+        bottlePool.Add(bottle);
+        bottleDictionary.Add(bottleGO, bottle);
+    }
 
     private void Update()
     {

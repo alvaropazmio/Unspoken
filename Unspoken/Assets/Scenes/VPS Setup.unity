@@ -1532,7 +1532,7 @@ MonoBehaviour:
   bottlePrefab: {fileID: 4391029338446301491, guid: b7a9ce14435e4184f898871b87e3a038, type: 3}
   bottleStorage: {fileID: 837454701}
   bottleDisplayer: {fileID: 781835949}
-  bottleCount: 1
+  bottleCount: 10
   thrust: 200
   currentState: 0
 --- !u!114 &1681789970
