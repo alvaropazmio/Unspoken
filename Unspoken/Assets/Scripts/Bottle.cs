@@ -15,6 +15,8 @@ public class Bottle : MonoBehaviour
 
     private float approachVelocity = 0.2f;
     private float idleSpeed = 0.06f;
+    private float smoothTime = 0.25f;
+    private Vector3 followingVelocity = Vector3.zero;
     //this value also exists on Bottle Manager, it would be better to have a gobal value that manages this
     private float thrust = 150;
 
@@ -49,6 +51,7 @@ public class Bottle : MonoBehaviour
             case State.Display:
                 ARText.SetActive(true);
                 ARButton.SetActive(true);
+                //SmoothFolow();
                 break;
             case State.Close:
                 animator.SetBool("Selected", false);
@@ -99,6 +102,13 @@ public class Bottle : MonoBehaviour
         rigidBody.AddForce(Camera.main.transform.forward * thrust);
 
         ChangeState("Idle");
+    }
+
+    private void SmoothFolow()
+    {
+        Vector3 targetPos = displayPoint.transform.position;
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref followingVelocity, smoothTime);
+        transform.LookAt(2 * transform.position - Camera.main.transform.position);
     }
 
     public void Activate(GameObject displayerGO)
