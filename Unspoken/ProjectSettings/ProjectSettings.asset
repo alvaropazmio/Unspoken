@@ -160,7 +160,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.Group2.Unspoken
+    Android: com.Group2.UnspokenVPS
     Standalone: com.DefaultCompany.Unspoken
   buildNumber:
     Standalone: 0

@@ -27,8 +27,12 @@ public class Bottle : MonoBehaviour
     [SerializeField]
     private State currentState;
 
+    private bool wayspotEnabled = false;
+
     //public delegate void WayspotCreator(Matrix4x4 localPose);
     //public event WayspotCreator WayspotCreated;
+
+
 
     private void Awake()
     {
@@ -70,9 +74,14 @@ public class Bottle : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plane")
         {
+            if (wayspotEnabled)
+                return;
+
             //CreateWayspot(out Matrix4x4 localPose);
             //WayspotCreated.Invoke(localPose);
-            BottleActions.OnBottleCreated(this);
+            Debug.Log("wow");
+            wayspotEnabled = true;
+            BottleActions.OnWayspotRequested(this);
         }
     }
 

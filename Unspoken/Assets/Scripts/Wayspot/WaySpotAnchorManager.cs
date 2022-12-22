@@ -12,7 +12,7 @@ using Niantic.ARDK.Extensions;
 using Niantic.ARDK.LocationService;
 using Niantic.ARDK.Utilities;
 using Niantic.ARDK.Utilities.Input.Legacy;
-
+using Niantic.ARDKExamples.WayspotAnchors;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,6 +30,8 @@ public class WaySpotAnchorManager : MonoBehaviour
 
     private string _localisationStatus;
 
+    private GameObject _bottlePrefab;
+
     private void Awake()
     {
         //Remember to set a user ID for launch and final presentation
@@ -41,16 +43,25 @@ public class WaySpotAnchorManager : MonoBehaviour
     private void OnEnable()
     {
         ARSessionFactory.SessionInitialized += HandleSessionInitialized;
+
+        BottleActions.OnBottlePrefabSent += RecievePrefab;
         //!!!!! find a better place
-        BottleActions.OnBottleCreated += HandleNewWayspot;
+        BottleActions.OnWayspotRequested += HandleNewWayspot;
     }
 
     private void OnDisable()
     {
         ARSessionFactory.SessionInitialized -= HandleSessionInitialized;
-        //!!!!! find a better place
-        BottleActions.OnBottleCreated -= HandleNewWayspot;
 
+        BottleActions.OnBottlePrefabSent -= RecievePrefab;
+        //!!!!! find a better place
+        BottleActions.OnWayspotRequested -= HandleNewWayspot;
+
+    }
+
+    private void RecievePrefab (GameObject bottlePrefab)
+    {
+        _bottlePrefab = bottlePrefab;
     }
 
     private void OnDestroy()
@@ -65,9 +76,8 @@ public class WaySpotAnchorManager : MonoBehaviour
     private void Update()
     {
         if (wayspotAnchorService == null)
+            Debug.LogError("WayspotAnchorService creation unsuccesfull");
             return;
-
-        //have to get the Matrix4x4 of the bottle with it's position, rotation and scale.
 
     }
 
@@ -92,6 +102,101 @@ public class WaySpotAnchorManager : MonoBehaviour
 
         }
     }
+
+    public void SaveWayspotAnchors()
+    {
+        if(_wayspotAnchorTrackers.Count > 0)
+        {
+            var wayspotAnchors = wayspotAnchorService.GetAllWayspotAnchors();
+
+            var savableAnchors = wayspotAnchors.Where(a => a.Status == WayspotAnchorStatusCode.Limited || a.Status == WayspotAnchorStatusCode.Success);
+            var payloads = savableAnchors.Select(a => a.Payload);
+            Debug.Log("Array Payload = " + payloads.Count());
+            WayspotAnchorDataUtility.SaveLocalPayloads(payloads.ToArray());
+        }
+        else
+        {
+            WayspotAnchorDataUtility.SaveLocalPayloads(Array.Empty<WayspotAnchorPayload>());
+        }
+        UpdateLocalisationStatus($"Saved {_wayspotAnchorTrackers.Count} Wayspot Anchors.");
+    }
+
+    public void LoadWayspotAnchors()
+    {
+        var payloads = WayspotAnchorDataUtility.LoadLocalPayloads();
+        if (payloads.Length > 0)
+        {
+            foreach(var payload in payloads)
+            {
+                var anchors = wayspotAnchorService.RestoreWayspotAnchors(payload);
+                if (anchors.Length == 0)
+                {
+                    Debug.Log("error raised in CreateWayspotAnchors");
+                    return; 
+                }
+
+                CreateLoadedGameObject(anchors[0], Vector3.zero, Quaternion.identity, true);
+            }
+            UpdateLocalisationStatus($"Loaded {_wayspotAnchorTrackers.Count} anchors.");
+            Debug.Log($"Ammount of anchors in payload: {payloads.Count()}");
+        }
+        else
+        {
+            UpdateLocalisationStatus("No anchors to load");
+        }
+    }
+
+    private GameObject CreateLoadedGameObject
+        (
+            IWayspotAnchor anchor,
+            Vector3 position,
+            Quaternion rotation,
+            bool startActive
+        )
+    {
+        var go = Instantiate(_bottlePrefab, position, rotation);
+
+        var tracker = go.GetComponent<WayspotAnchorTracker>();
+        if (tracker == null)
+        {
+            Debug.Log("Anchor prefab was missing WayspotAnchorTracker, so one will be added.");
+            tracker = go.AddComponent<WayspotAnchorTracker>();
+        }
+
+        tracker.gameObject.SetActive(startActive);
+        tracker.AttachAnchor(anchor);
+        _wayspotAnchorTrackers.Add(tracker);
+
+        return go;
+    }
+
+
+    public void RestartWayspotAnchorService()
+    {
+        wayspotAnchorService.Restart();
+
+        UpdateLocalisationStatus("Wayspot Anchor Service Restarted");
+    }
+
+
+    public void ClearAnchorGameObjects()
+    {
+        if (_wayspotAnchorTrackers.Count == 0)
+        {
+            UpdateLocalisationStatus("No anchors to clear");
+            return;
+        }
+
+        foreach (var anchor in _wayspotAnchorTrackers)
+            Destroy(anchor.gameObject);
+
+        var wayspotAnchor = _wayspotAnchorTrackers.Select(go => go.WayspotAnchor).ToArray();
+        wayspotAnchorService.DestroyWayspotAnchors(wayspotAnchor);
+
+        _wayspotAnchorTrackers.Clear();
+        UpdateLocalisationStatus("Cleared Wayspot Anchors");
+    }
+
 
 
     private void PlaceAnchor(Matrix4x4 localPose, GameObject bottle)

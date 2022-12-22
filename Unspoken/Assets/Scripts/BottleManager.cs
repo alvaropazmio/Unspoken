@@ -5,15 +5,17 @@
 // Object pool bottles * 
 // Migrate Throw on Touch *
 // Three Empty states for 
-    //Welcome *
-    //Scan main spot *
-    //Scan for water *
+//Welcome *
+//Scan main spot *
+//Scan for water *
 // Migrate Select on Touch *
 // Check for Touch *
 // State Machine switching between Setup and game *
 // Handle Actions and events * (didn't need any events in this script)
 // Create new Bottle and throw *
 
+using Niantic.ARDK.AR.WayspotAnchors;
+using Niantic.ARDK.Extensions;
 using Niantic.ARDK.Utilities.Input.Legacy;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,13 +62,34 @@ public class BottleManager : MonoBehaviour
 
     }
 
+    private void OnEnable()
+    {
+        //BottleActions.OnBottleLoaded += CreateNewBottle;
+
+
+    }
+
+    private void OnDisable()
+    {
+        //BottleActions.OnBottleLoaded -= CreateNewBottle;
+    }
+
+    private void Start()
+    {
+        //this feels ilegal
+        BottleActions.OnBottlePrefabSent(bottlePrefab);
+    }
+
+
     public void CreateNewBottle()
     {
-        var newGo = Instantiate(bottlePrefab, Vector3.zero, Quaternion.identity);
-        Bottle newBottle = newGo.GetComponent<Bottle>();
+
+        var go = Instantiate(bottlePrefab, Vector3.zero, Quaternion.identity);
+
+        Bottle newBottle = go.GetComponent<Bottle>();
 
         bottlePool.Add(newBottle);
-        bottleDictionary.Add(newGo, newBottle);
+        bottleDictionary.Add(go, newBottle);
 
         if (currentState == State.Setup)
         {
