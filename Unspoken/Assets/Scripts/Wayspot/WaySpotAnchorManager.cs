@@ -175,6 +175,7 @@ public class WaySpotAnchorManager : MonoBehaviour
 
     public void RestartWayspotAnchorService()
     {
+        ClearAnchorGameObjects();
         wayspotAnchorService.Restart();
         WayspotAnchorDataUtility.ClearLocalPayloads();
 
