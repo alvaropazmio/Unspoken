@@ -129,24 +129,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote
         NetworkingPersistentKeyValueUpdatedMessage.ID.Combine(stageIdentifier),
         HandleUpdatedPersistentKeyValueMessage
       );
-
-      _RemoteConnection.Register
-      (
-        NetworkingDataReceivedFromArmMessage.ID.Combine(stageIdentifier),
-        HandleDataReceivedFromArmMessage
-      );
-
-      _RemoteConnection.Register
-      (
-        NetworkingStatusReceivedFromArmMessage.ID.Combine(stageIdentifier),
-        HandleStatusReceivedFromArmMessage
-      );
-
-      _RemoteConnection.Register
-      (
-        NetworkingResultReceivedFromArmMessage.ID.Combine(stageIdentifier),
-        HandleResultReceivedFromArmMessage
-      );
     }
 
     ~_RemoteEditorMultipeerNetworking()
@@ -284,23 +266,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote
       SendDataToPeers(tag, data, OtherPeers, transportType, sendToSelf);
     }
 
-    public void SendDataToArm(uint tag, byte[] data)
-    {
-      var message =
-        new NetworkingSendDataToArmMessage
-        {
-          Tag = tag,
-          Data = data
-        };
-
-      _RemoteConnection.Send
-      (
-        NetworkingSendDataToArmMessage.ID.Combine(StageIdentifier),
-        message.SerializeToArray(),
-        TransportType.ReliableOrdered
-      );
-    }
-
     public void StorePersistentKeyValue(string key, byte[] value)
     {
       var message =
@@ -370,7 +335,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote
             (TransportType) message.TransportType,
             message.Data
           );
-
         handler(args);
       }
     }
@@ -411,36 +375,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote
       var handler = PersistentKeyValueUpdated;
       if (handler != null)
         handler(new PersistentKeyValueUpdatedArgs(key, value));
-    }
-
-    private void HandleResultReceivedFromArmMessage(MessageEventArgs e)
-    {
-      var message = e.data.DeserializeFromArray<NetworkingResultReceivedFromArmMessage>();
-
-      var handler = SessionResultReceivedFromArm;
-      if (handler != null)
-        handler(new SessionResultReceivedFromArmArgs(message.Outcome, message.Details));
-    }
-
-    private void HandleStatusReceivedFromArmMessage(MessageEventArgs e)
-    {
-      var message = e.data.DeserializeFromArray<NetworkingStatusReceivedFromArmMessage>();
-
-      var handler = SessionStatusReceivedFromArm;
-      if (handler != null)
-        handler(new SessionStatusReceivedFromArmArgs(message.Status));
-    }
-
-    private void HandleDataReceivedFromArmMessage(MessageEventArgs e)
-    {
-      var message = e.data.DeserializeFromArray<NetworkingDataReceivedFromArmMessage>();
-
-      var handler = DataReceivedFromArm;
-      if (handler != null)
-      {
-        var args = new DataReceivedFromArmArgs(message.Tag, message.Data);
-        handler(args);
-      }
     }
 
     private void HandleDeinitializingMessage(MessageEventArgs e)
@@ -496,24 +430,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote
         NetworkingPersistentKeyValueUpdatedMessage.ID.Combine(StageIdentifier),
         HandleUpdatedPersistentKeyValueMessage
       );
-
-      _RemoteConnection.Unregister
-      (
-        NetworkingDataReceivedFromArmMessage.ID.Combine(StageIdentifier),
-        HandleDataReceivedFromArmMessage
-      );
-
-      _RemoteConnection.Unregister
-      (
-        NetworkingStatusReceivedFromArmMessage.ID.Combine(StageIdentifier),
-        HandleStatusReceivedFromArmMessage
-      );
-
-      _RemoteConnection.Unregister
-      (
-        NetworkingResultReceivedFromArmMessage.ID.Combine(StageIdentifier),
-        HandleResultReceivedFromArmMessage
-      );
     }
 
     public RuntimeEnvironment RuntimeEnvironment
@@ -538,12 +454,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote
     public event ArdkEventHandler<PeerRemovedArgs> PeerRemoved;
     public event ArdkEventHandler<PersistentKeyValueUpdatedArgs> PersistentKeyValueUpdated;
     public event ArdkEventHandler<DeinitializedArgs> Deinitialized;
-
-#pragma warning disable CS0067
-    public event ArdkEventHandler<DataReceivedFromArmArgs> DataReceivedFromArm;
-    public event ArdkEventHandler<SessionStatusReceivedFromArmArgs> SessionStatusReceivedFromArm;
-    public event ArdkEventHandler<SessionResultReceivedFromArmArgs> SessionResultReceivedFromArm;
-#pragma warning restore CS0067
 
     private ArdkEventHandler<ConnectedArgs> _connected;
     public event ArdkEventHandler<ConnectedArgs> Connected

@@ -43,8 +43,6 @@ using Niantic.ARDK.Utilities.Logging;
 using Niantic.ARDK.VirtualStudio;
 using Niantic.ARDK.VirtualStudio.AR;
 
-
-
 namespace Niantic.ARDK.AR
 {
   /// <inheritdoc />
@@ -299,7 +297,7 @@ namespace Niantic.ARDK.AR
         ARLog._Error("Configuration validation failed, not running session");
         return;
       }
-      
+
       try
       {
         var configForTelemetry = (IARWorldTrackingConfiguration)configuration;
@@ -325,8 +323,8 @@ namespace Niantic.ARDK.AR
       SetUpdatingCamera(_updatingCamera);
 
       ARLog._DebugFormat("Running _NativeARSession with options: {0}", false, options);
-      
-      
+
+
       if (_NativeAccess.IsNativeAccessValid())
       {
         var nativeConfiguration = (_NativeARConfiguration)configuration;
@@ -513,7 +511,7 @@ namespace Niantic.ARDK.AR
       errorMessage = string.Empty;
       return AwarenessInitializationStatus.Unknown;
     }
-    
+
     [Obsolete
     (
       "Explicit addition of a command to invoke the native render " +
@@ -536,7 +534,7 @@ namespace Niantic.ARDK.AR
 #if UNITY_ANDROID && !UNITY_EDITOR
       // Only required on Android
       _CheckThread();
-      
+
       if (_commandBuffer == null)
       {
         // Allocate the command buffer that periodically invokes the native ARCore update event
@@ -550,12 +548,12 @@ namespace Niantic.ARDK.AR
         // Remove ARCore updates from the current external camera, if any
         if (_updatingCamera != null)
           ARSessionBuffersHelper.RemoveBackgroundBuffer(_updatingCamera, _commandBuffer);
-        
+
         // Assign updating ARCore to the internal camera
         _virtualCamera ??= _VirtualCameraFactory.CreateContinousVirtualCamera(_commandBuffer);
         ARLog._Debug("Fetching ARCore updates are enabled on the _NativeARSession.");
       }
-      
+
       // Assign to a new external camera
       else if (_updatingCamera != camera)
       {
@@ -625,6 +623,23 @@ namespace Niantic.ARDK.AR
         _frameUpdated += value;
       }
       remove => _frameUpdated -= value;
+    }
+    
+    private ArdkEventHandler<FrameUpdatedArgs> _frameDropped;
+    
+    /// Similar to FrameUpdated, but it won't wait to join the Unity thread.
+    /// This event propagates frames that don't surface during the regular
+    /// update routine.
+    /// @note Do not interact with Unity objects in this event's callbacks.
+    internal event ArdkEventHandler<FrameUpdatedArgs> FrameDropped
+    {
+      add
+      {
+        _CheckThread();
+
+        _frameDropped += value;
+      }
+      remove => _frameDropped -= value;
     }
 
     private ArdkEventHandler<AnchorsArgs> _anchorsAdded;
@@ -1175,9 +1190,15 @@ namespace Niantic.ARDK.AR
       var oldFramePtr = Interlocked.Exchange(ref session._newestFramePtr, framePtr);
       if (oldFramePtr != IntPtr.Zero)
       {
-        // We release the old frame, as now framePtr is stored as _newestFrame.
-        // The already scheduled callback queue will get our newestFrame to process.
-        _NativeARFrame._ReleaseImmediate(oldFramePtr);
+        // If anyone is interested in accessing frames that will be dropped 
+		var tempFrame = new _NativeARFrame(oldFramePtr, session.WorldScale);
+        if (session._frameDropped != null)
+        {
+          // Propagate this native frame
+          session._frameDropped.Invoke(new FrameUpdatedArgs(tempFrame));
+        }
+		// Dispose of the tempFrame, which in turn also disposes of the oldFramePtr
+        tempFrame.Dispose();
         ARLog._Debug("Releasing frame generated before prior one was processed.", true);
         return;
       }
@@ -1197,12 +1218,14 @@ namespace Niantic.ARDK.AR
           }
 
           var frame = new _NativeARFrame(newFramePtr, session.WorldScale);
+
 #if AR_NATIVE_SUPPORT
           // We mark the frame as consumed to let the native layer know that
           // this ARFrame was not dropped and it's going to be processed by
-          // the application. 
+          // the application.
           _NARSession_MarkFrameConsumed(session._nativeHandle, newFramePtr);
 #endif
+
           session.CurrentFrame = frame;
           session.UpdateGenerators(frame);
 
@@ -1857,7 +1880,7 @@ namespace Niantic.ARDK.AR
 
     internal static class _TestingShim
     {
-#pragma warning disable 0162
+      #pragma warning disable 0162
       // If the session has already been disposed, this method will incidentally recreate the
       // session's _handle. To avoid this, use _GetHandle and the _InvokeDidReceiveFrame override
       // that takes an IntPtr instead of a _NativeARSession.
@@ -1876,7 +1899,7 @@ namespace Niantic.ARDK.AR
       {
         return session._handle;
       }
-#pragma warning restore 0162
+      #pragma warning restore 0162
     }
 
 #endregion
@@ -1900,7 +1923,7 @@ namespace Niantic.ARDK.AR
 
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARSession_Pause(IntPtr nativeSession);
-    
+
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARSession_MarkFrameConsumed(IntPtr nativeSession, IntPtr nativeFrame);
 

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 
 using Niantic.ARDK.AR;
 using Niantic.ARDK.AR.Camera;
+using Niantic.ARDK.Utilities.Logging;
 using Niantic.ARDK.VirtualStudio.AR;
 
 using UnityEngine;
@@ -551,26 +552,39 @@ namespace Niantic.ARDK.Utilities
       return AffineRotation(GetAngle(from, to));
     }
 
+    private static Camera _cachedMainCamera;
+    private static Camera _CachedMainCamera
+    {
+      get
+      {
+        if (_cachedMainCamera == null) 
+          _cachedMainCamera = Camera.main;
+        
+        return _cachedMainCamera;
+      }
+    }
+
+    /// Returns the orientation of the running device.
     internal static ScreenOrientation CalculateScreenOrientation()
     {
 #if UNITY_EDITOR
-  #if ARDK_TEST
-        return Screen.width > Screen.height
-            ? ScreenOrientation.LandscapeLeft
-            : ScreenOrientation.Portrait;
-  #else
-      var width = _MockCameraConfiguration.CorrectedScreenWidth > 0
-        ? _MockCameraConfiguration.CorrectedScreenWidth
-        : Screen.width;
+      var camera = _CachedMainCamera;
+      if (camera == null)
+      {
+        ARLog._Warn
+        (
+          "Could not infer screen orientation because the main camera is not available. " + 
+          "The returned value is sometimes incorrect due to Unity Issue-598763"
+        );
+        
+        return Screen.orientation;
+      }
 
-      var height = _MockCameraConfiguration.CorrectedScreenHeight > 0
-        ? _MockCameraConfiguration.CorrectedScreenHeight
-        : Screen.height;
-      
-        return width > height
-          ? ScreenOrientation.LandscapeLeft
-          : ScreenOrientation.Portrait;
-  #endif
+      var aspect = camera.aspect;
+      var result = aspect < 1.0f
+        ? ScreenOrientation.Portrait
+        : ScreenOrientation.LandscapeLeft;
+      return result;
 #else
       return Screen.orientation;
 #endif

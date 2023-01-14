@@ -165,7 +165,7 @@ namespace Niantic.ARDK.VirtualStudio
     {
       // Must do this before entering Play Mode, because saving the prefab asset
       // while in Play Mode causes unexplained errors during mock awareness buffer generation.
-      var scenePrefab = GetMockScenePrefab();
+      var scenePrefab = _GetMockScenePrefab();
       if (scenePrefab != null)
         scenePrefab.GetComponent<MockSceneConfiguration>()._SetLayersIfNeeded(true);
     }
@@ -192,7 +192,7 @@ namespace Niantic.ARDK.VirtualStudio
       }
 
       // Instantiate Mock Scene
-      var scenePrefab = GetMockScenePrefab();
+      var scenePrefab = _GetMockScenePrefab();
       if (scenePrefab != null)
         PrefabUtility.InstantiatePrefab(scenePrefab);
     }
@@ -205,7 +205,8 @@ namespace Niantic.ARDK.VirtualStudio
       _listeningForJoin = false;
     }
 
-    private GameObject GetMockScenePrefab()
+    // TODO (kcho): Re-private this once OnPlayModeStateChanged bug is resolved
+    internal GameObject _GetMockScenePrefab()
     {
       if (string.IsNullOrEmpty(SceneGuid))
         return null;

@@ -119,11 +119,6 @@ namespace Niantic.ARDK.Internals
       // The initialization of C# components should happen below.
       _SetAuthenticationParameters();
       SetDeviceMetadata();
-
-      _TelemetryService.RecordEvent(new InitializationEvent()
-      {
-        InstallMode = GetInstallMode(),
-      });
     }
 
     private static void OnApplicationQuit()
@@ -233,88 +228,12 @@ namespace Niantic.ARDK.Internals
     {
       if (_rosettaCompatibilityCheckPerformed)
         return false;
-
-#if UNITY_EDITOR
-      if (_ArdkPlatformUtility.IsUsingRosetta())
-      {
-        return _EnableRosettaFiles();
-      }
-
-      _DisableRosettaFiles();
-#endif
+      
       _rosettaCompatibilityCheckPerformed = true;
       return false;
     }
 
 #if UNITY_EDITOR
-    private static bool _EnableRosettaFiles()
-    {
-      ARLog._Debug("Enabling the files for rosetta compatibility");
-      bool fileChanged = false;
-      foreach (var rosettaFile in _rosettaFiles)
-      {
-        var disabledFileName = rosettaFile.Value + FileDisablingSuffix;
-        var absolutePath = _GetPathForFile(rosettaFile.Key, disabledFileName);
-
-        if (!string.IsNullOrWhiteSpace(absolutePath))
-          fileChanged |= _EnableFileWithRename(absolutePath);
-      }
-
-      return fileChanged;
-    }
-
-    private static void _DisableRosettaFiles()
-    {
-      ARLog._Debug("Disabling the files for rosetta compatibility");
-
-      foreach (var rosettaFile in _rosettaFiles)
-      {
-        var absolutePath = _GetPathForFile(rosettaFile.Key, rosettaFile.Value);
-
-        if (!string.IsNullOrWhiteSpace(absolutePath))
-          _DisableFileWithRename(absolutePath);
-      }
-    }
-
-    private static bool _EnableFileWithRename(string sourceFilePath)
-    {
-      string sourcePathEnabledFile = sourceFilePath.Substring(0, sourceFilePath.Length - FileDisablingSuffix.Length);
-
-      if (File.Exists(sourcePathEnabledFile))
-      {
-        ARLog._Debug($"File with name {sourcePathEnabledFile} already exists. So removing disabled file if exists");
-        if (File.Exists(sourceFilePath))
-        {
-          ARLog._Debug($"Deleting {sourceFilePath}");
-
-          File.Delete(sourceFilePath);
-          RemoveMetaFile(sourceFilePath);
-        }
-      }
-      else
-      {
-        ARLog._Debug($"File with name {sourcePathEnabledFile} does not exist. Creating it.");
-        File.Move(sourceFilePath, sourcePathEnabledFile);
-        RemoveMetaFile(sourceFilePath);
-        return true;
-      }
-
-      return false;
-    }
-
-    private static void _DisableFileWithRename(string sourcePath)
-    {
-      string newPath = sourcePath + FileDisablingSuffix;
-
-      if (File.Exists(newPath))
-      {
-        ARLog._Debug($"File with name {newPath} already exists. So cleaning it up");
-        File.Delete(newPath);
-      }
-
-      File.Move(sourcePath, newPath);
-      RemoveMetaFile(sourcePath);
-    }
     
     private static void RemoveMetaFile(string sourcePath)
     {
@@ -369,7 +288,7 @@ namespace Niantic.ARDK.Internals
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _ROR_CREATE_STARTUP_SYSTEMS();
 
-    [DllImport(_ARDKLibrary.libraryName, CharSet = CharSet.Auto)]
+    [DllImport(_ARDKLibrary.libraryName)]
     private static extern IntPtr _NARSystemBase_Initialize(_TelemetryService._ARDKTelemetry_Callback callback);
 
     [DllImport(_ARDKLibrary.libraryName)]

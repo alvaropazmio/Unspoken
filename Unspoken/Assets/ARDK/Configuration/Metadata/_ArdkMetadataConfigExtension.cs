@@ -18,8 +18,8 @@ namespace Niantic.ARDK.Configuration.Internal
     public const string ClientIdHeaderKey = "x-ardk-clientid";
     public const string UserIdHeaderKey = "x-ardk-userid";
     public const string ArClientEnvelopeKey = "x-ardk-clientenvelope";
+    public const string FallbackArAgeLevelKey = "x-ardk-agelevel"; 
     public const string ApplicationIdKey = "x-ardk-application-id";
-    public const string FallbackArAgeLevelKey = "x-ardk-agelevel";
 
     /// Get the common data envelope (client metadata protobuf) serialized into a Json string
     internal static string GetCommonDataEnvelopeAsJson(this _IArdkMetadataConfig metadataConfig)
@@ -72,10 +72,10 @@ namespace Niantic.ARDK.Configuration.Internal
       header.Add(ClientIdHeaderKey, metadataConfig.GetClientId()); 
       header.Add(UserIdHeaderKey, metadataConfig.GetUserId());
       header.Add(ApplicationIdKey, metadataConfig.GetApplicationId());
+      header.Add(FallbackArAgeLevelKey, metadataConfig.GetAgeLevel().ToString().ToUpper());
       var encodedString = EncodeAsBase64(metadataConfig.ConstructClientEnvelopeStructAsJson());
       header.Add(ArClientEnvelopeKey, encodedString);
-      header.Add(FallbackArAgeLevelKey, metadataConfig.GetAgeLevel().ToString().ToUpper());
-
+      
       return header;
     }
     

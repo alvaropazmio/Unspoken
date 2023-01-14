@@ -89,6 +89,21 @@ namespace Niantic.ARDK.AR.Awareness
     private ScreenOrientation _lastOrientation;
     private int _lastTargetWidth, _lastTargetHeight;
     private bool _didReceiveFirstUpdate;
+    private bool _didUpdateAwarenessBuffer;
+
+    protected void SetAwarenessBuffer(TBuffer buffer)
+    {
+      if (buffer == null)
+        return;
+      
+      // Release the previous buffer, if any
+      AwarenessBuffer?.Dispose();
+
+      // Cache a copy of the new buffer
+      AwarenessBuffer = buffer.GetCopy() as TBuffer;
+
+      _didUpdateAwarenessBuffer = true;
+    }
 
     /// Updates the internal state of the context awareness stream.
     /// Calculates the transformation matrix used to map the buffer's
@@ -109,23 +124,13 @@ namespace Niantic.ARDK.AR.Awareness
     {
       if (frame == null || frame.Camera == null) return;
 
+      // Writes _didUpdateAwarenessBuffer
+      SetAwarenessBuffer(buffer);
+      
       // Processing this frame can continue without having a new
       // awareness buffer available. In that case, we just update
       // the display and interpolation transformations.
-      var didUpdateAwarenessBuffer = buffer != null;
-      var isFirstUpdate = AwarenessBuffer == null && didUpdateAwarenessBuffer;
-
-      // In case we have a new buffer available, we retain a CPU-side copy
-      // This is necessary because the original buffer is owned by the
-      // ARFrame and thus will get deallocated with it.
-      if (didUpdateAwarenessBuffer)
-      {
-        // Release the previous buffer, if any
-        AwarenessBuffer?.Dispose();
-
-        // Cache a copy of the new buffer
-        AwarenessBuffer = buffer.GetCopy() as TBuffer;
-      }
+      var isFirstUpdate = !_didReceiveFirstUpdate && _didUpdateAwarenessBuffer;
 
       // We either have not received the first buffer or failed to make a copy
       if (AwarenessBuffer == null)
@@ -180,7 +185,7 @@ namespace Niantic.ARDK.AR.Awareness
       // We only need to update the interpolation transform either if
       // there is a new buffer or if it's set to be updated every frame
       var isInterpolationTransformDirty =
-        (InterpolationMode == InterpolationMode.Balanced && didUpdateAwarenessBuffer) ||
+        (InterpolationMode == InterpolationMode.Balanced && _didUpdateAwarenessBuffer) ||
         InterpolationMode == InterpolationMode.Smooth;
 
       if (isInterpolationTransformDirty)
@@ -205,7 +210,7 @@ namespace Niantic.ARDK.AR.Awareness
           : _displayTransform;
       }
 
-      if (didUpdateAwarenessBuffer)
+      if (_didUpdateAwarenessBuffer)
       {
         // The back projection transform converts normalized
         // viewport coordinates to 3D points in camera space.
@@ -223,7 +228,7 @@ namespace Niantic.ARDK.AR.Awareness
       // This state variable represents whether the current representation of the
       // context awareness buffer is altered, i.e. the contents of the buffer
       // changes or it needs to be mapped to the screen differently.
-      var isRepresentationDirty = didUpdateAwarenessBuffer || isSamplerTransformDirty;
+      var isRepresentationDirty = _didUpdateAwarenessBuffer || isSamplerTransformDirty;
 
       #if CONTEXT_AWARENESS_USE_INFERENCE_TIME_CAMERA
       // When CONTEXT_AWARENESS_USE_INFERENCE_TIME_CAMERA is defined,
@@ -248,9 +253,12 @@ namespace Niantic.ARDK.AR.Awareness
           new ContextAwarenessStreamUpdatedArgs<TBuffer>
           (
             sender: this,
-            isKeyFrame: didUpdateAwarenessBuffer
+            isKeyFrame: _didUpdateAwarenessBuffer
           )
         );
+        
+        // Reset update state
+        _didUpdateAwarenessBuffer = false;
       }
     }
 

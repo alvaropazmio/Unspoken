@@ -5,7 +5,6 @@ using System.Linq;
 
 using Niantic.ARDK.AR;
 using Niantic.ARDK.AR.Camera;
-using Niantic.ARDK.AR.ARSessionEventArgs;
 using Niantic.ARDK.Utilities;
 using Niantic.ARDK.Utilities.Logging;
 
@@ -27,8 +26,6 @@ namespace Niantic.ARDK.Rendering
     public Resolution Resolution { get; }
     public Matrix4x4 DisplayTransform { get; private set; }
     public Matrix4x4 ProjectionTransform { get; private set; }
-
-    protected IARSession Session { get; private set; }
 
     public float NearPlane
     {
@@ -244,21 +241,12 @@ namespace Niantic.ARDK.Rendering
     /// @param far The distance of the far clipping plane.
     protected ARFrameRenderer(RenderTarget target, float near, float far)
     {
-      ARSessionFactory.SessionInitialized += OnARSessionInitialized;
-      
       _originalOrientation = MathUtils.CalculateScreenOrientation();
       
       Target = target;
       Resolution = target.GetResolution(_originalOrientation);
       NearPlane = near;
       FarPlane = far;
-      
-    }
-    
-    private void OnARSessionInitialized(AnyARSessionInitializedArgs args)
-    {
-      ARSessionFactory.SessionInitialized -= OnARSessionInitialized;
-      Session = args.Session;
     }
 
     /// Initializes rendering resources.
@@ -476,8 +464,6 @@ namespace Niantic.ARDK.Rendering
 
     private void Release()
     {
-      Session = null;
-
       OnRelease();
 
       if (_renderMaterial != null)

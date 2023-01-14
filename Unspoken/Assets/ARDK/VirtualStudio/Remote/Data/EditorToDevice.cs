@@ -121,15 +121,6 @@ namespace Niantic.ARDK.VirtualStudio.Remote.Data
     public byte[] Value = null;
   }
 
-  [Serializable]
-  internal sealed class NetworkingSendDataToArmMessage
-  {
-    public static readonly Guid ID = new Guid("52c251b0-afb9-4e4d-ac31-b75cabec02f3");
-
-    public uint Tag = 0U;
-    public byte[] Data = null;
-  }
-
   #endregion
 
 #region ARNetworking

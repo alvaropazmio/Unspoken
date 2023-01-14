@@ -16,19 +16,23 @@ using Niantic.ARDK.Utilities.Logging;
 
 namespace Niantic.Experimental.ARDK.SharedAR
 {
+  public interface INativeNetworking : INetworking {
+    IntPtr GetNativeHandle();
+  }
+
   /// @note This is an experimental feature. Experimental features should not be used in
   /// production products as they are subject to breaking changes, not officially supported, and
   /// may be deprecated without notice
   public class _NativeNetworking :
-    INetworking
+    INativeNetworking
   {
-    private bool IsDestroyed = false;
+    private bool _isDestroyed;
     private bool _isServer;
-    private bool _didSubscribeToNativeEvents = false;
-    private const string DEFAULT_SESSION = "default_session_id";
-    
-    private IPeerID _selfPeerID;
+    private bool _didSubscribeToNativeEvents;
     private readonly List<IPeerID> _peerIDs = new List<IPeerID>();
+    private IPeerID _selfPeerId;
+
+    private const string DEFAULT_SESSION = "default_session_id";
 
     internal string SessionId { get; private set; } = DEFAULT_SESSION;
     public event ArdkEventHandler<ConnectionEventArgs> ConnectionEvent;
@@ -38,20 +42,20 @@ namespace Niantic.Experimental.ARDK.SharedAR
 
     public _NativeNetworking(string connectionId = "", NetworkingBackend backend = NetworkingBackend.NetworkingV0)
     {
-      _nativeHandle = (!string.IsNullOrEmpty(connectionId)) ? 
+      _nativeHandle = (!string.IsNullOrEmpty(connectionId)) ?
         _NARNetworking_Init
         (
           connectionId,
           _applicationHandle,
           (byte)backend
-        ) : 
+        ) :
         _NARNetworking_Init
         (
-          DEFAULT_SESSION, 
+          DEFAULT_SESSION,
           _applicationHandle,
           (byte)backend
         );
-      
+
       GC.AddMemoryPressure(GCPressure);
       SessionId = connectionId;
       SubscribeToNativeCallbacks();
@@ -82,7 +86,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
         for (var j = 0; j < 16; j++)
           peerIdentifiers[j + i * 16] = peerGuids[j];
       }
-      
+
       _NARNetworking_SendData
       (
         _nativeHandle,
@@ -105,7 +109,31 @@ namespace Niantic.Experimental.ARDK.SharedAR
 
     bool INetworking.IsServer => _isServer;
 
-    IPeerID INetworking.SelfPeerID => _selfPeerID;
+    public IPeerID SelfPeerID
+    {
+      get
+      {
+        // only generate a self peer id object once and cache it
+        if (_selfPeerId == null)
+        {
+          // create a 16-byte array to hold the bytes of a guid (since a guid is exactly 16 bytes)
+          var selfIdBytes = new byte[16];
+          // pin the selfIdBytes array with a GCHandle before passing this to C++ so heap address of array doesn't change from GC
+          var handle = GCHandle.Alloc(selfIdBytes, GCHandleType.Pinned);
+          // get a pointer to the element at the first index of the selfIdBytes array
+          var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(selfIdBytes, 0);
+          // pass the pointer and array size of 16 to native side to be populated
+          _NARNetworking_GetSelfPeerId(_nativeHandle, ptr, (uint)selfIdBytes.Length);
+          // create a guid object from the now populated selfIdBytes array
+          var selfIdGuid = new Guid(selfIdBytes);
+          // unpin the selfIdBytes array so proper GC cleanup can occur for the array
+          handle.Free();
+          _selfPeerId = new PeerIDv0(_Peer.FromIdentifier(selfIdGuid));
+        }
+
+        return _selfPeerId;
+      }
+    }
 
     public IPeerID ServerPeerId { get; }
 
@@ -139,7 +167,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
     }
 
     public RoomParams RoomParams { get; }
-    
+
     public void Dispose()
     {
       if (_nativeHandle != IntPtr.Zero)
@@ -176,7 +204,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
     // The pointer to the C++ object handling functionality at the native level
     private IntPtr _nativeHandle;
 
-    internal IntPtr GetNativeHandle()
+    public IntPtr GetNativeHandle()
     {
       return _nativeHandle;
     }
@@ -213,7 +241,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
     }
 #endregion
 
-#region PInvoke    
+#region PInvoke
     // C# -> C++ Calls
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern IntPtr _NARNetworking_Init
@@ -222,7 +250,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       IntPtr applicationHandle,
       byte implementationType
     );
-    
+
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARNetworking_Release(IntPtr nativeHandle);
 
@@ -249,8 +277,8 @@ namespace Niantic.Experimental.ARDK.SharedAR
     private static extern void _NARNetworking_GetSelfPeerId
     (
       IntPtr nativeHandle,
-      byte[] outPeerId,
-      UInt32 outPeerIdSize
+      IntPtr outPeerId,
+      uint outPeerIdSize
     );
 
     [DllImport(_ARDKLibrary.libraryName)]
@@ -276,7 +304,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
 
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARNetworking_Leave(IntPtr nativeHandle);
-    
+
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARNetworking_GetConnectionId
     (
@@ -284,7 +312,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       string outName,
       UInt64 maxNameSize
     );
-    
+
     // Setting callbacks from C++
     [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARNetworking_Set_connectionEventCallback
@@ -324,14 +352,14 @@ namespace Niantic.Experimental.ARDK.SharedAR
       IntPtr context,
       byte connectionEvent
     );
-    
+
     private delegate void _NARNetworking_peerAddedOrRemovedCallback
     (
       IntPtr context,
       // TODO: use byte array of UUID instead of IPeer pointer
       IntPtr peerIDPtr
     );
-    
+
     private delegate void _NARNetworking_dataReceivedCallback
     (
       IntPtr context,
@@ -342,13 +370,13 @@ namespace Niantic.Experimental.ARDK.SharedAR
       IntPtr peerInfo,
       byte transportType
     );
-    
+
     [MonoPInvokeCallback(typeof(_NARNetworking_connectionEventCallback))]
     private static void _connectionEventReceivedNative(IntPtr context, byte connectionEvent)
     {
       ARLog._Debug("Invoked _connectionEventReceivedNative");
       var instance = SafeGCHandle.TryGetInstance<_NativeNetworking>(context);
-      if (instance == null || instance.IsDestroyed)
+      if (instance == null || instance._isDestroyed)
         return;
 
       ARLog._WarnFormat("Got connection event {0}",false, connectionEvent);
@@ -356,12 +384,12 @@ namespace Niantic.Experimental.ARDK.SharedAR
       (
         () =>
         {
-          if (instance.IsDestroyed)
+          if (instance._isDestroyed)
           {
             ARLog._Warn("Queued _connectionEventReceivedNative invoked after C# instance was destroyed.");
             return;
           }
-          
+
           var handler = instance.ConnectionEvent;
           if (handler != null)
           {
@@ -381,7 +409,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       ARLog._Debug("Invoked _didAddPeerNative");
 
       var instance = SafeGCHandle.TryGetInstance<_NativeNetworking>(context);
-      if (instance == null || instance.IsDestroyed)
+      if (instance == null || instance._isDestroyed)
       {
         ARLog._Warn("_didAddPeerNative invoked after C# instance was destroyed.");
         _Peer._ReleasePeer(peerIDPtr);
@@ -392,7 +420,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       (
         () =>
         {
-          if (instance.IsDestroyed)
+          if (instance._isDestroyed)
           {
             ARLog._Warn("Queued _didAddPeerNative invoked after C# instance was destroyed.");
             _Peer._ReleasePeer(peerIDPtr);
@@ -414,7 +442,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
         }
       );
     }
-    
+
     [MonoPInvokeCallback(typeof(_NativeNetworking._NARNetworking_peerAddedOrRemovedCallback))]
     private static void _didRemovePeerNative(IntPtr context, IntPtr peerIDPtr)
     {
@@ -423,7 +451,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       ARLog._Debug("Invoked _didRemovePeerNative");
 
       var instance = SafeGCHandle.TryGetInstance<_NativeNetworking>(context);
-      if (instance == null || instance.IsDestroyed)
+      if (instance == null || instance._isDestroyed)
       {
         ARLog._Warn("_didRemovePeerNative invoked after C# instance was destroyed.");
         _Peer._ReleasePeer(peerIDPtr);
@@ -434,7 +462,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       (
         () =>
         {
-          if (instance.IsDestroyed)
+          if (instance._isDestroyed)
           {
             ARLog._Warn("Queued _didRemovePeerNative invoked after C# instance was destroyed.");
             _Peer._ReleasePeer(peerIDPtr);
@@ -473,7 +501,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       ARLog._Debug("Invoked _dataReceivedNative", true);
       var instance = SafeGCHandle.TryGetInstance<_NativeNetworking>(context);
 
-      if (instance == null || instance.IsDestroyed)
+      if (instance == null || instance._isDestroyed)
       {
         ARLog._Warn("Queued _dataReceivedNative called after C# instance was destroyed.");
         _Peer._ReleasePeer(rawPeer);
@@ -487,7 +515,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
       (
         () =>
         {
-          if (instance.IsDestroyed)
+          if (instance._isDestroyed)
           {
             var msg = "Queued _dataReceivedNative called after C# instance was destroyed.";
             ARLog._Warn(msg);
@@ -498,7 +526,7 @@ namespace Niantic.Experimental.ARDK.SharedAR
 
           // TODO Just wrap it for now, build better IntPtr -> IPeerID handling later
           var peer = _Peer.FromNativeHandle(rawPeer);
-          
+
           var handler = instance.DataReceived;
           if (handler != null)
           {

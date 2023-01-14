@@ -13,20 +13,21 @@ namespace Niantic.ARDK.Utilities.Editor
     // @param targetDirectory The directory the file wants to live in
     public static string BuildAssetPath(string fileName, string targetDirectory)
     {
-      var assetPath = targetDirectory + "/" + fileName;
+      var assetPath = Path.Combine(targetDirectory, fileName);
 
       if (File.Exists(assetPath))
       {
-        var split = fileName.Split('.');
-        var assetName = split[0];
-        var assetExt = split[1];
+        var assetName = Path.GetFileNameWithoutExtension(fileName);
+        var assetExt = Path.GetExtension(fileName);
         var count = 0;
 
-        while (File.Exists(assetPath))
+        do 
         {
           count += 1;
-          assetPath = $"{targetDirectory}/{assetName}_{count}.{assetExt}";
+          var newName = $"{assetName}_{count}{assetExt}";
+          assetPath = Path.Combine(targetDirectory, newName);
         }
+        while (File.Exists(assetPath));
       }
 
       return assetPath;

@@ -55,9 +55,25 @@ namespace Niantic.ARDK.AR.Awareness.Semantics
     {
       if (_session != null)
         _session.FrameUpdated -= OnFrameUpdated;
+      
+      if (_NativeAccess.IsNativeAccessValid() && _session is _NativeARSession prevNativeARSession)
+        prevNativeARSession.FrameDropped -= OnFrameDropped;
 
       _session = args.Session;
       _session.FrameUpdated += OnFrameUpdated;
+
+      if (_NativeAccess.IsNativeAccessValid() && _session is _NativeARSession nativeARSession)
+        nativeARSession.FrameDropped += OnFrameDropped;
+    }
+
+    private void OnFrameDropped(FrameUpdatedArgs args)
+    {
+      // Wait for the first regular update
+      if (AwarenessBuffer == null)
+        return;
+
+      // Try to capture dropped keyframes
+      SetAwarenessBuffer(args.Frame.Semantics);
     }
 
     private void OnFrameUpdated(FrameUpdatedArgs args)

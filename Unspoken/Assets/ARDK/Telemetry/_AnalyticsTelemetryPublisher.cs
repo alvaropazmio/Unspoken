@@ -11,7 +11,7 @@ namespace Niantic.ARDK.Telemetry
     _ITelemetryPublisher
   {
     private readonly ARDKTelemetryService<ARDKTelemetryOmniProto> _ardkPublisher;
-    private const string _NonNativeTelemetryKey = "be3c4f1e-5206-405b-a1c3-046e2883a3f4"; 
+    private const string _NonNativeTelemetryKey = "9e23bef9-e755-4248-bc53-bfd44888b458"; 
     
     public _AnalyticsTelemetryPublisher(string directoryPath, string key, bool registerLogger)
     {

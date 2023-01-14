@@ -1,6 +1,7 @@
 // Copyright 2022 Niantic, Inc. All Rights Reserved.
 
 using Niantic.ARDK.AR;
+using Niantic.ARDK.AR.WayspotAnchors;
 using Niantic.ARDK.Utilities;
 
 namespace Niantic.Experimental.ARDK.SharedAR
@@ -30,6 +31,20 @@ namespace Niantic.Experimental.ARDK.SharedAR
     public static IColocalization Create(INetworking networking, IARSession arSession)
     {
       var colocalization = new _NativeVPSColocalization(networking, arSession);
+
+      var handler = ColocalizationCreated;
+      if (handler != null)
+      {
+        var args = new ColocalizationCreatedArgs(colocalization);
+        handler(args);
+      }
+
+      return colocalization;
+    }
+    
+    public static IColocalization Create(INetworking networking, IARSession arSession, WayspotAnchorPayload content)
+    {
+      var colocalization = new _NativeVPSColocalization(networking, arSession, content);
 
       var handler = ColocalizationCreated;
       if (handler != null)

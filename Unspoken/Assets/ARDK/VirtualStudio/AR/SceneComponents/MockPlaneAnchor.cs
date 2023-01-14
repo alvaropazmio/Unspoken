@@ -141,7 +141,9 @@ namespace Niantic.ARDK.VirtualStudio.AR.Mock
         ARLog._DebugFormat
         (
           "Plane anchor for {0} cannot be detected. If that is unintended, check" +
-          "that the active ARWorldTrackingConfiguration's PlaneDetection value is correct."
+          "that the active ARWorldTrackingConfiguration's PlaneDetection value is correct.",
+          false,
+          gameObject.name
         );
 
         enabled = false;

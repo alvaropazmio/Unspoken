@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -64,11 +65,11 @@ namespace Niantic.ARDK.Telemetry
       {
         if (_commonMetadata == null)
           _commonMetadata = LazyInitializeCommonMetadata();
-        
+
         return _commonMetadata;
       }
     }
-    
+
     private static _AnalyticsTelemetryPublisher _lazyAnalyticsTelemetryPublisherInstance ;
     private static _AnalyticsTelemetryPublisher _AnalyticsTelemetryPublisherInstance
     {
@@ -86,22 +87,20 @@ namespace Niantic.ARDK.Telemetry
     private static readonly MessageParser<ARDKTelemetryOmniProto> _protoMessageParser;
     private static readonly ConcurrentQueue<ARDKTelemetryOmniProto> _messagesToBeSent;
 
-    // constants
-
     // fields required for safe startup
     private static object _lock;
-    private static bool _isIntialised = false; 
+    private static bool _isIntialised = false;
     public static readonly _TelemetryService Instance;
-    
+
     static _TelemetryService()
     {
       _lock = new object();
       Instance = new _TelemetryService();
-      
+
       _protoMessageParser = new MessageParser<ARDKTelemetryOmniProto>(() => new ARDKTelemetryOmniProto());
       _messagesToBeSent = new ConcurrentQueue<ARDKTelemetryOmniProto>();
     }
-    
+
     public void Start(string persistentDataPath)
     {
       ARLog._Debug("Starting the telemetry service");
@@ -113,16 +112,16 @@ namespace Niantic.ARDK.Telemetry
 
         _isIntialised = true;
       }
-      
+
       // in case it is called multiple times. Lets cancel the previous run.
-      if (_cancellationTokenSource != null && 
+      if (_cancellationTokenSource != null &&
           _cancellationTokenSource.IsCancellationRequested)
       {
         _cancellationTokenSource.Cancel();
       }
 
       _cancellationTokenSource = new CancellationTokenSource();
-#pragma warning disable CS4014 
+#pragma warning disable CS4014
       // CS 4014: we are not awaiting the fire and forget task. boohoo.
       Task.Run(async () =>
       {
@@ -132,10 +131,10 @@ namespace Niantic.ARDK.Telemetry
         }
       });
 #pragma warning restore CS4014
-      
+
       ARLog._Debug("Started the telemetry service successfully");
     }
-    
+
     public void Stop()
     {
       ARLog._Debug("Stopping the telemetry service");
@@ -148,13 +147,13 @@ namespace Niantic.ARDK.Telemetry
           return;
         }
       }
-      
-      if (_cancellationTokenSource != null && 
+
+      if (_cancellationTokenSource != null &&
           !_cancellationTokenSource.IsCancellationRequested)
       {
         _cancellationTokenSource.Cancel();
       }
-      
+
       lock (_lock)
       {
         _isIntialised = false;
@@ -164,7 +163,49 @@ namespace Niantic.ARDK.Telemetry
     }
 
 #region C-sharp event logging
-    
+
+    public static void RecordEvent(VpsStateChangeEvent stateChangeEvent)
+    {
+      try
+      {
+        ARDKTelemetryOmniProto stateChangeEventOmniProto = new ARDKTelemetryOmniProto()
+        {
+          VpsStateChangeEvent = stateChangeEvent,
+          TimestampMs = GetCurrentUtcTimestamp(),
+          DeveloperKey = _DeveloperApiKey,
+          CommonMetadata = _CommonMetadata.Clone(),
+          ArSessionId = _sessionId.ToString(),
+        };
+
+        _messagesToBeSent.Enqueue(stateChangeEventOmniProto);
+      }
+      catch (Exception ex)
+      {
+        ARLog._Warn($"Recording telemetry event failed with {ex}");
+      }
+    }
+
+    public static void RecordEvent(WayspotAnchorStateChangeEvent wayspotAnchorStateChangeEvent)
+    {
+      try
+      {
+        ARDKTelemetryOmniProto stateChangeEventOmniProto = new ARDKTelemetryOmniProto()
+        {
+          WayspotAnchorStateChangeEvent = wayspotAnchorStateChangeEvent,
+          TimestampMs = GetCurrentUtcTimestamp(),
+          DeveloperKey = _DeveloperApiKey,
+          CommonMetadata = _CommonMetadata.Clone(),
+          ArSessionId = _sessionId.ToString(),
+        };
+
+        _messagesToBeSent.Enqueue(stateChangeEventOmniProto);
+      }
+      catch (Exception ex)
+      {
+        ARLog._Warn($"Recording telemetry event failed with {ex}");
+      }
+    }
+
     public static void RecordEvent(InitializationEvent initializationEvent)
     {
       try
@@ -185,7 +226,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
     public static void RecordEvent(ARSessionEvent sessionEvent)
     {
       try
@@ -198,7 +239,7 @@ namespace Niantic.ARDK.Telemetry
           CommonMetadata = _CommonMetadata.Clone(),
           ArSessionId = _sessionId.ToString(),
         };
-      
+
         _messagesToBeSent.Enqueue(initOmniProto);
       }
       catch (Exception ex)
@@ -206,7 +247,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
     public static void RecordEvent(EnabledContextualAwarenessEvent enabledContextualAwarenessEvent)
     {
       try
@@ -219,7 +260,7 @@ namespace Niantic.ARDK.Telemetry
           CommonMetadata = _CommonMetadata.Clone(),
           ArSessionId = _sessionId.ToString(),
         };
-      
+
         _messagesToBeSent.Enqueue(initOmniProto);
       }
       catch (Exception ex)
@@ -227,7 +268,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
     public static void RecordEvent(MultiplayerColocalizationEvent multiplayerColocalizationEvent)
     {
       try
@@ -240,7 +281,7 @@ namespace Niantic.ARDK.Telemetry
           CommonMetadata = _CommonMetadata.Clone(),
           ArSessionId = _sessionId.ToString(),
         };
-      
+
         _messagesToBeSent.Enqueue(initOmniProto);
       }
       catch (Exception ex)
@@ -248,7 +289,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
     public static void RecordEvent(MultiplayerConnectionEvent multiplayerConnectionEvent)
     {
       try
@@ -261,7 +302,7 @@ namespace Niantic.ARDK.Telemetry
           CommonMetadata = _CommonMetadata.Clone(),
           ArSessionId = _sessionId.ToString(),
         };
-      
+
         _messagesToBeSent.Enqueue(initOmniProto);
       }
       catch (Exception ex)
@@ -269,7 +310,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
     public static void RecordEvent(MultiplayerColocalizationInitializationEvent multiplayerColocalizationInitializationEvent)
     {
       try
@@ -282,7 +323,7 @@ namespace Niantic.ARDK.Telemetry
           CommonMetadata = _CommonMetadata.Clone(),
           ArSessionId = _sessionId.ToString(),
         };
-      
+
         _messagesToBeSent.Enqueue(initOmniProto);
       }
       catch (Exception ex)
@@ -290,7 +331,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
     public static void RecordEvent(LightshipServiceEvent lightshipServiceEvent, string requestId)
     {
       try
@@ -305,7 +346,7 @@ namespace Niantic.ARDK.Telemetry
           CommonMetadata = commonMetadata,
           ArSessionId = _sessionId.ToString(),
         };
-      
+
         _messagesToBeSent.Enqueue(initOmniProto);
       }
       catch (Exception ex)
@@ -313,7 +354,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Warn($"Recording telemetry event failed with {ex}");
       }
     }
-    
+
 #endregion
 
     private static async Task PublishEventsEverySecondAsync(CancellationToken cancellationToken)
@@ -324,7 +365,7 @@ namespace Niantic.ARDK.Telemetry
         PublishTelemetryEvents(_messagesToBeSent);
         await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
       }
-      
+
       ARLog._Debug("Stopping fire and forget task for event publishing");
     }
 
@@ -345,28 +386,42 @@ namespace Niantic.ARDK.Telemetry
         }
       }
     }
-    
+
     // Has to be internal since we provide it for nar system initialization in StartupSystems
-    internal delegate void _ARDKTelemetry_Callback([MarshalAs(UnmanagedType.LPArray, SizeParamIndex= 1)]byte[] serialisedProto, UInt32 length);
+    internal delegate void _ARDKTelemetry_Callback([MarshalAs(UnmanagedType.LPArray, SizeParamIndex= 1)] byte[] requestId, UInt32 requestIdLength, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex= 3)]byte[] serialisedProto, UInt32 length);
 
     [MonoPInvokeCallback(typeof(_ARDKTelemetry_Callback))]
-    internal static void _OnNativeRecordTelemetry(byte[] serialisedPayload, UInt32 payloadLength)
+    internal static void _OnNativeRecordTelemetry(byte[] requestId, UInt32 requestIdLength, byte[] serialisedPayload, UInt32 payloadLength)
     {
       try
       {
-        var omniProtoObject = _protoMessageParser.ParseFrom(serialisedPayload); 
+        var omniProtoObject = _protoMessageParser.ParseFrom(serialisedPayload);
         if (omniProtoObject.TimestampMs == default)
         {
           omniProtoObject.TimestampMs = GetCurrentUtcTimestamp();
         }
         
+        var requestIdString = string.Empty;
+        try
+        {
+          // GetString() can throw NullRef, Argument and Decoding exceptions. We cannot do anything about it.
+          // so we log the exception and move on. 
+          if(requestIdLength > 0)
+            requestIdString = Encoding.UTF8.GetString(requestId);
+        }
+        catch (Exception ex)
+        {
+          ARLog._WarnFormat("Getting requestId failed with {0}", objs: ex);
+        }
+        
         omniProtoObject.CommonMetadata = _CommonMetadata.Clone();
         omniProtoObject.ArSessionId = _sessionId.ToString();
         omniProtoObject.DeveloperKey = _DeveloperApiKey;
+        omniProtoObject.CommonMetadata.RequestId = requestIdString;
         
         _messagesToBeSent.Enqueue(omniProtoObject);
       }
-      catch (Exception e) 
+      catch (Exception e)
       {
         // failing silently and not bothering the users
         ARLog._WarnFormat("Sending telemetry failed: {0}.", objs: e);
@@ -385,7 +440,7 @@ namespace Niantic.ARDK.Telemetry
         ARLog._Debug("The user has been determined to be a minor. Disabling telemetry.");
         return new _DummyTelemetryPublisher();
       }
-    
+
       ARLog._Debug("Using the ardk telemetry service.");
       return _AnalyticsTelemetryPublisherInstance;
     }
@@ -397,7 +452,7 @@ namespace Niantic.ARDK.Telemetry
       _persistentDataPath = persistentDataPath;
       ArdkGlobalConfig._LoginChanged += OnConfigLoginChanged;
       ARSessionFactory.SessionInitialized += AssignCurrentSessionInfo;
-      
+
       ARLog._Debug("Successfully initialized telemetry service.");
     }
 
@@ -405,19 +460,19 @@ namespace Niantic.ARDK.Telemetry
     {
       return GetPublisherBasedOnAgeLevel();
     }
-    
+
     private static long GetCurrentUtcTimestamp()
     {
       return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
     }
-    
+
     private static void AssignCurrentSessionInfo(AnyARSessionInitializedArgs args)
     {
       _currentSession = args.Session;
       _sessionId = args.Session.StageIdentifier;
       _currentSession.Deinitialized += UnAssignCurrentSessionInfo;
     }
-    
+
     private static ARCommonMetadata LazyInitializeCommonMetadata()
     {
       var internallyVisibleConfig = ArdkGlobalConfig._Internal;
@@ -430,44 +485,44 @@ namespace Niantic.ARDK.Telemetry
       var deviceModel = internallyVisibleConfig.GetDeviceModel();
       var ardkAppInstanceId = internallyVisibleConfig.GetArdkAppInstanceId();
       var platform = internallyVisibleConfig.GetPlatform();
-      
+
       var commonMetadata = new ARCommonMetadata
       {
-        Manufacturer = string.IsNullOrWhiteSpace(manufacturer) ? 
+        Manufacturer = string.IsNullOrWhiteSpace(manufacturer) ?
           string.Empty : manufacturer,
-        
-        ApplicationId = string.IsNullOrWhiteSpace(appId) ? 
+
+        ApplicationId = string.IsNullOrWhiteSpace(appId) ?
           string.Empty : appId,
-        
-        ClientId = string.IsNullOrWhiteSpace(clientId) ? 
+
+        ClientId = string.IsNullOrWhiteSpace(clientId) ?
           string.Empty : clientId,
-        
-        UserId = string.IsNullOrWhiteSpace(userId) ? 
+
+        UserId = string.IsNullOrWhiteSpace(userId) ?
           string.Empty : userId,
-        
-        ArdkVersion = string.IsNullOrWhiteSpace(ardkVersion) ? 
+
+        ArdkVersion = string.IsNullOrWhiteSpace(ardkVersion) ?
           string.Empty : ardkVersion,
-        
-        DeviceModel = string.IsNullOrWhiteSpace(deviceModel) ? 
+
+        DeviceModel = string.IsNullOrWhiteSpace(deviceModel) ?
           string.Empty : deviceModel,
-        
-        ArdkAppInstanceId = string.IsNullOrWhiteSpace(ardkAppInstanceId) ? 
+
+        ArdkAppInstanceId = string.IsNullOrWhiteSpace(ardkAppInstanceId) ?
           string.Empty : ardkAppInstanceId,
-        
-        Platform = string.IsNullOrWhiteSpace(platform) ? 
+
+        Platform = string.IsNullOrWhiteSpace(platform) ?
           string.Empty : platform,
       };
 
       return commonMetadata;
     }
-    
+
     private static _AnalyticsTelemetryPublisher LazyIntializeAnalyticsPublisher()
     {
       var telemetryKey = string.IsNullOrWhiteSpace(ArdkGlobalConfig._GetTelemetryKey()) ? string.Empty : ArdkGlobalConfig._GetTelemetryKey();
       return new _AnalyticsTelemetryPublisher
-      ( 
-        _persistentDataPath + Path.DirectorySeparatorChar + "temp", 
-        telemetryKey, 
+      (
+        _persistentDataPath + Path.DirectorySeparatorChar + "temp",
+        telemetryKey,
         false
       );
     }
@@ -476,7 +531,7 @@ namespace Niantic.ARDK.Telemetry
     {
       _currentSession = null;
     }
-    
+
     ~_TelemetryService()
     {
       ARSessionFactory.SessionInitialized -= AssignCurrentSessionInfo;

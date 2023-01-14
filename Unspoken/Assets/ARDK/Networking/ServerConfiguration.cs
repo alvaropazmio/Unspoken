@@ -1,4 +1,3 @@
-#define AUTH_REQUIRED
 // Copyright 2022 Niantic, Inc. All Rights Reserved.
 using System;
 
@@ -18,7 +17,7 @@ namespace Niantic.ARDK.Networking
     /// <summary>
     /// Endpoint that serves an ARBE address + public key, and is used to connect in native.
     /// </summary>
-    public static readonly string ARBEEndpoint = "https://ardk.eng.nianticlabs.com:8084/publickey";
+    public static readonly string ARBEEndpoint = "https://ardk-int.eng.nianticlabs.com:8084/publickey";
     
     /// <summary>
     /// API key to use for authenticating the application. Create a Resources/ARDK directory and

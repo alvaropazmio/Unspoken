@@ -422,44 +422,6 @@ namespace Niantic.ARDK.Networking
       );
     }
 
-    public void SendDataToArm(uint tag, byte[] data)
-    {
-      if (data == null)
-        throw new ArgumentNullException(nameof(data));
-
-      _CheckThread();
-
-      if (_nativeHandle == IntPtr.Zero)
-        throw new ArgumentException("Multipeer networking was destroyed!");
-
-      if (!IsConnected)
-      {
-        ARLog._Warn
-        (
-          "ARDK: Cannot send data through a multipeer networking session " +
-          "that is not connected."
-        );
-
-        return;
-      }
-
-      ARLog._DebugFormat
-      (
-        "Sending message to Arm with tag: {0} and data of length: {1}",
-        true,
-        tag,
-        data.Length
-      );
-
-      _NARMultipeerNetworking_SendDataToARM
-      (
-        _nativeHandle,
-        tag,
-        data,
-        (ulong)data.Length
-      );
-    }
-
     /// <inheritdoc />
     public override string ToString()
     {
@@ -577,8 +539,6 @@ namespace Niantic.ARDK.Networking
       // TODO(awang): Make an IReleasable interface that handles this for all native-related classes
       GC.AddMemoryPressure(GCPressure);
 
-      _nativeARMSenderHandle = _NARMultipeerNetworking_GetARMMessageSender(_nativeHandle);
-
       SubscribeToInternalCallbacks();
     }
 
@@ -586,7 +546,6 @@ namespace Niantic.ARDK.Networking
     internal _NativeMultipeerNetworking(IntPtr nativeMultipeerNetworking)
     {
       _nativeHandle = nativeMultipeerNetworking;
-      _nativeARMSenderHandle = _NARMultipeerNetworking_GetARMMessageSender(_nativeHandle);
 
       Guid stageIdentifier;
       _NARMultipeerNetworking_GetStageIdentifier(_nativeHandle, out stageIdentifier);
@@ -636,8 +595,6 @@ namespace Niantic.ARDK.Networking
 
       if (_nativeHandle != IntPtr.Zero)
       {
-        _NARMultipeerNetworking_ReleaseARMMessageSender(_nativeARMSenderHandle);
-        _nativeARMSenderHandle = IntPtr.Zero;
         _NARMultipeerNetworking_Release(_nativeHandle);
         _nativeHandle = IntPtr.Zero;
 
@@ -710,30 +667,10 @@ namespace Niantic.ARDK.Networking
     /// <inheritdoc />
     public event ArdkEventHandler<DeinitializedArgs> Deinitialized;
 
-    /// <inheritdoc />
-    public event ArdkEventHandler<DataReceivedFromArmArgs> DataReceivedFromArm = (args) => {};
-
-    /// <inheritdoc />
-    public event ArdkEventHandler<SessionStatusReceivedFromArmArgs> SessionStatusReceivedFromArm
-    {
-      add { _sessionStatusReceivedFromArm += value; }
-      remove { _sessionStatusReceivedFromArm -= value; }
-    }
-
-    /// <inheritdoc />
-    public event ArdkEventHandler<SessionResultReceivedFromArmArgs> SessionResultReceivedFromArm
-    {
-      add { _sessionResultReceivedFromArm += value; }
-      remove { _sessionResultReceivedFromArm -= value; }
-    }
-
     // Below here are private fields and methods to handle native code and callbacks
 
     // The pointer to the C++ object handling functionality at the native level
     private IntPtr _nativeHandle;
-
-    // The pointer to the C++ object for sending ARM messages.
-    private IntPtr _nativeARMSenderHandle;
 
     internal IntPtr GetNativeHandle()
     {
@@ -783,7 +720,6 @@ namespace Niantic.ARDK.Networking
     private bool _didAddPeerInitialized;
     private bool _didRemovePeerInitialized;
     private bool _didUpdatePersistentKeyValueInitialized;
-    private bool _armCallbacksInitialized;
 
 #region InternalSubscriptions
     /// <summary>
@@ -797,7 +733,6 @@ namespace Niantic.ARDK.Networking
       SubscribeToDidRemovePeer();
       SubscribeToConnectionDidFailWithError();
       SubscribeToDidReceiveDataFromPeer();
-      SubscribeToArmCallbacks();
     }
 
     internal void SubscribeToDidConnect()
@@ -925,51 +860,10 @@ namespace Niantic.ARDK.Networking
         _didUpdatePersistentKeyValueInitialized = true;
       }
     }
-
-    internal void SubscribeToArmCallbacks()
-    {
-      if (_armCallbacksInitialized)
-        return;
-
-      lock (this)
-      {
-        if (_armCallbacksInitialized)
-          return;
-
-        _NARMultipeerNetworking_Set_didReceiveDataFromARMCallback
-        (
-          _applicationHandle,
-          _nativeHandle,
-          _didReceiveDataFromArmNative
-        );
-
-        _NARMultipeerNetworking_Set_didReceiveARMSessionStatusCallback
-        (
-          _applicationHandle,
-          _nativeHandle,
-          _didReceiveSessionStatusFromArmNative
-        );
-
-        _NARMultipeerNetworking_Set_didReceiveARMSessionResultCallback
-        (
-          _applicationHandle,
-          _nativeHandle,
-          _didReceiveSessionResultFromArmNative
-        );
-
-        _armCallbacksInitialized = true;
-      }
-    }
 #endregion
 #endregion
 
 #region InternalCallbacks
-    private event ArdkEventHandler<SessionStatusReceivedFromArmArgs> _sessionStatusReceivedFromArm =
-      (args) => {};
-
-    private event ArdkEventHandler<SessionResultReceivedFromArmArgs> _sessionResultReceivedFromArm =
-      (args) => {};
-
     [MonoPInvokeCallback(typeof(_NARMultipeerNetworking_Did_Connect_Callback))]
     private static void _didConnectNative
     (
@@ -1223,124 +1117,6 @@ namespace Niantic.ARDK.Networking
         }
       );
     }
-
-    [MonoPInvokeCallback(typeof(_NARMultipeerNetworking_Did_Receive_Data_From_ARM_Callback))]
-    private static void _didReceiveDataFromArmNative
-    (
-      IntPtr context,
-      UInt32 tag,
-      IntPtr rawData,
-      UInt64 rawDataSize
-    )
-    {
-      ARLog._Debug("Invoked _didReceiveDataFromArmNative");
-      var session = SafeGCHandle.TryGetInstance<_NativeMultipeerNetworking>(context);
-
-      if (session == null || session.IsDestroyed)
-      {
-        ARLog._Warn("_didReceiveDataFromArmNative invoked after C# object was destroyed.");
-        return;
-      }
-
-      var data = new byte[rawDataSize];
-      Marshal.Copy(rawData, data, 0, (int)rawDataSize);
-
-      _CallbackQueue.QueueCallback
-      (
-        () =>
-        {
-          if (session.IsDestroyed)
-          {
-            ARLog._Warn("_didReceiveDataFromArmNative invoked after C# object was destroyed.");
-          }
-
-          ARLog._Debug("Surfacing DataReceivedFromArm event");
-          var args = new DataReceivedFromArmArgs(tag, data);
-          session.DataReceivedFromArm(args);
-        }
-      );
-    }
-
-    [MonoPInvokeCallback
-      (typeof(_NARMultipeerNetworking_Did_Receive_Session_Status_From_ARM_Callback))]
-    private static void _didReceiveSessionStatusFromArmNative
-    (
-      IntPtr context,
-      UInt32 status
-    )
-    {
-      ARLog._Debug("Invoked _didReceiveSessionStatusFromArmNative");
-      var session = SafeGCHandle.TryGetInstance<_NativeMultipeerNetworking>(context);
-
-      if (session == null || session.IsDestroyed)
-      {
-        ARLog._Warn("_didReceiveSessionStatusFromArmNative invoked after C# object was destroyed.");
-        return;
-      }
-
-      _CallbackQueue.QueueCallback
-      (
-        () =>
-        {
-          if (session.IsDestroyed)
-          {
-            ARLog._Warn("_didReceiveSessionStatusFromArmNative invoked after C# object was destroyed.");
-          }
-
-          ARLog._Debug("Surfacing SessionStatusReceivedFromArmArgs event");
-          var args = new SessionStatusReceivedFromArmArgs(status);
-          session._sessionStatusReceivedFromArm(args);
-        }
-      );
-    }
-
-    [MonoPInvokeCallback
-      (typeof(_NARMultipeerNetworking_Did_Receive_Session_Result_From_ARM_Callback))]
-    private static void _didReceiveSessionResultFromArmNative
-    (
-      IntPtr context,
-      UInt32 outcome,
-      IntPtr rawDetails,
-      UInt64 rawDetailsSize
-    )
-    {
-      ARLog._Debug("Invoked _didReceiveSessionResultFromArmNative");
-      var session = SafeGCHandle.TryGetInstance<_NativeMultipeerNetworking>(context);
-
-      if (session == null || session.IsDestroyed)
-      {
-        ARLog._Warn("_didReceiveSessionStatusFromArmNative invoked after C# object was destroyed.");
-        return;
-      }
-
-      byte[] data;
-
-      if (rawDetailsSize == 0 || rawDetails == IntPtr.Zero)
-      {
-        data = EmptyArray<byte>.Instance;
-      }
-      else
-      {
-        data = new byte[rawDetailsSize];
-        Marshal.Copy(rawDetails, data, 0, (int)rawDetailsSize);
-      }
-
-
-      _CallbackQueue.QueueCallback
-      (
-        () =>
-        {
-          if (session.IsDestroyed)
-          {
-            ARLog._Warn("_didReceiveSessionStatusFromArmNative invoked after C# object was destroyed.");
-          }
-
-          ARLog._Debug("Surfacing SessionResultReceivedFromArmArgs event");
-          var args = new SessionResultReceivedFromArmArgs(outcome, data);
-          session._sessionResultReceivedFromArm(args);
-        }
-      );
-    }
 #endregion
 
     [DllImport(_ARDKLibrary.libraryName)]
@@ -1419,24 +1195,6 @@ namespace Niantic.ARDK.Networking
     );
 
     [DllImport(_ARDKLibrary.libraryName)]
-    private static extern IntPtr _NARMultipeerNetworking_GetARMMessageSender(IntPtr nativeHandle);
-
-    [DllImport(_ARDKLibrary.libraryName)]
-    private static extern void _NARMultipeerNetworking_ReleaseARMMessageSender
-    (
-      IntPtr armSenderNativeHandle
-    );
-
-    [DllImport(_ARDKLibrary.libraryName)]
-    private static extern void _NARMultipeerNetworking_SendDataToARM
-    (
-      IntPtr nativeHandle,
-      UInt32 tag,
-      byte[] data,
-      UInt64 dataSize
-    );
-
-    [DllImport(_ARDKLibrary.libraryName)]
     private static extern void _NARMultipeerNetworking_Set_didConnectCallback
     (
       IntPtr context,
@@ -1485,31 +1243,6 @@ namespace Niantic.ARDK.Networking
     );
 
     [DllImport(_ARDKLibrary.libraryName)]
-    private static extern void _NARMultipeerNetworking_Set_didReceiveDataFromARMCallback
-    (
-      IntPtr context,
-      IntPtr nativeHandle,
-      _NARMultipeerNetworking_Did_Receive_Data_From_ARM_Callback cb
-    );
-
-    [DllImport(_ARDKLibrary.libraryName)]
-    private static extern void _NARMultipeerNetworking_Set_didReceiveARMSessionStatusCallback
-    (
-      IntPtr context,
-      IntPtr nativeHandle,
-      _NARMultipeerNetworking_Did_Receive_Session_Status_From_ARM_Callback cb
-    );
-
-    [DllImport(_ARDKLibrary.libraryName)]
-    private static extern void _NARMultipeerNetworking_Set_didReceiveARMSessionResultCallback
-    (
-      IntPtr context,
-      IntPtr nativeHandle,
-      _NARMultipeerNetworking_Did_Receive_Session_Result_From_ARM_Callback cb
-    );
-
-
-    [DllImport(_ARDKLibrary.libraryName)]
     private static extern int _NARMultipeerNetworking_GetLatestArbeRttMeasurement
     (
       IntPtr nativeHandle
@@ -1551,28 +1284,6 @@ namespace Niantic.ARDK.Networking
       string key,
       IntPtr value,
       UInt64 valueSize
-    );
-
-    private delegate void _NARMultipeerNetworking_Did_Receive_Data_From_ARM_Callback
-    (
-      IntPtr context,
-      UInt32 tag,
-      IntPtr rawData,
-      UInt64 rawDataSize
-    );
-
-    private delegate void _NARMultipeerNetworking_Did_Receive_Session_Status_From_ARM_Callback
-    (
-      IntPtr context,
-      UInt32 status
-    );
-
-    private delegate void _NARMultipeerNetworking_Did_Receive_Session_Result_From_ARM_Callback
-    (
-      IntPtr context,
-      UInt32 outcome,
-      IntPtr rawDetails,
-      UInt64 rawDetailsSize
     );
   }
 }

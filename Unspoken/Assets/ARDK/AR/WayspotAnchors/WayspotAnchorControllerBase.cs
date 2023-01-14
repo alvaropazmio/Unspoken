@@ -2,7 +2,8 @@
 
 using System;
 using System.Collections.Generic;
-
+using Niantic.ARDK.AR.Protobuf;
+using Niantic.ARDK.Telemetry;
 using Niantic.ARDK.Utilities;
 using Niantic.ARDK.Utilities.Logging;
 
@@ -108,6 +109,20 @@ namespace Niantic.ARDK.AR.WayspotAnchors
         wayspotAnchors.Add(wayspotAnchor);
       }
 
+      if (_NativeAccess.IsNativeAccessValid())
+      {
+        foreach (var wayspotAnchor in wayspotAnchors)
+        {
+          var wayspotAnchorStateChangedEvent = new WayspotAnchorStateChangeEvent()
+          {
+            AnchorId = wayspotAnchor.ID.ToString(),
+            AnchorState = wayspotAnchor.Status.ToString(),
+            Action = _TelemetryHelper.WayspotAnchorAction.Restore.ToString()
+          };
+          _TelemetryService.RecordEvent(wayspotAnchorStateChangedEvent);
+        }
+      }
+
       return wayspotAnchors.ToArray();
     }
 
@@ -123,11 +138,38 @@ namespace Niantic.ARDK.AR.WayspotAnchors
       );
 
       _localizationState = args.State;
+
+
+      if (_NativeAccess.IsNativeAccessValid())
+      {
+        var vpsStateChangedEvent = new VpsStateChangeEvent()
+        {
+          VpsState = args.State.ToString(),
+          LocalizationFailureReason = args.FailureReason.ToString()
+        };
+        _TelemetryService.RecordEvent(vpsStateChangedEvent);
+      }
+
       LocalizationStateUpdated?.Invoke(args);
     }
 
     protected void HandleWayspotAnchorsCreated(WayspotAnchorsCreatedArgs args)
     {
+      if (_NativeAccess.IsNativeAccessValid())
+      {
+        var wayspotAnchors = args.WayspotAnchors;
+        foreach (var wayspotAnchor in wayspotAnchors)
+        {
+          var wayspotAnchorStateChangedEvent = new WayspotAnchorStateChangeEvent()
+          {
+            AnchorId = wayspotAnchor.ID.ToString(),
+            AnchorState = wayspotAnchor.Status.ToString(),
+            Action = _TelemetryHelper.WayspotAnchorAction.Create.ToString()
+          };
+          _TelemetryService.RecordEvent(wayspotAnchorStateChangedEvent);
+        }
+      }
+      
       WayspotAnchorsCreated?.Invoke(args);
     }
 
@@ -148,6 +190,21 @@ namespace Niantic.ARDK.AR.WayspotAnchors
       {
         var anchor = _WayspotAnchorFactory.GetOrCreateFromIdentifier(statusUpdate.ID);
         ((_IInternalTrackable)anchor).SetStatusCode(statusUpdate.Code);
+      }
+      
+      if (_NativeAccess.IsNativeAccessValid())
+      {
+        var wayspotAnchorStatusUpdates = args.WayspotAnchorStatusUpdates;
+        foreach (var wayspotAnchorStatusUpdate in wayspotAnchorStatusUpdates)
+        {
+          var wayspotAnchorStateChangedEvent = new WayspotAnchorStateChangeEvent()
+          {
+            AnchorId = wayspotAnchorStatusUpdate.ID.ToString(),
+            AnchorState = wayspotAnchorStatusUpdate.Code.ToString(),
+            Action = _TelemetryHelper.WayspotAnchorAction.StatusUpdate.ToString()
+          };
+          _TelemetryService.RecordEvent(wayspotAnchorStateChangedEvent);
+        }
       }
 
       WayspotAnchorStatusUpdated?.Invoke(args);

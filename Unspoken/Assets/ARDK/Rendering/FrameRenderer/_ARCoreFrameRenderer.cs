@@ -2,6 +2,7 @@
 using System;
 
 using Niantic.ARDK.AR;
+using Niantic.ARDK.AR.ARSessionEventArgs;
 using Niantic.ARDK.Utilities.Logging;
 
 using UnityEngine;
@@ -20,13 +21,16 @@ namespace Niantic.ARDK.Rendering
     // Rendering resources
     private CommandBuffer _commandBuffer;
     private Texture2D _nativeTexture;
-    protected override Shader Shader { get; }
+    private IARSession _session;
 
+    protected override Shader Shader { get; }
+    
     public _ARCoreFrameRenderer(RenderTarget target)
       : base(target)
     {
       // The main shader used for rendering the background
       Shader = Resources.Load<Shader>("ARCoreFrame");
+      ARSessionFactory.SessionInitialized += OnARSessionInitialized;
     }
 
     public _ARCoreFrameRenderer
@@ -40,8 +44,15 @@ namespace Niantic.ARDK.Rendering
       // The main shader used for rendering the background
       Shader = customShader ? customShader : Resources.Load<Shader>("ARCoreFrame");
       ARLog._Debug("Loaded: " + (Shader != null ? Shader.name : null));
+      ARSessionFactory.SessionInitialized += OnARSessionInitialized;
     }
 
+    private void OnARSessionInitialized(AnyARSessionInitializedArgs args)
+    {
+      ARSessionFactory.SessionInitialized -= OnARSessionInitialized;
+      _session = args.Session;
+    }
+    
     protected override GraphicsFence? OnConfigurePipeline
     (
       RenderTarget target,
@@ -67,7 +78,7 @@ namespace Niantic.ARDK.Rendering
     protected override void OnAddToCamera(Camera camera)
     {
       // Take over fetching ARCore updates
-      if (Session is _NativeARSession nativeARSession)
+      if (_session is _NativeARSession nativeARSession)
         nativeARSession.SetUpdatingCamera(camera);
       
       ARSessionBuffersHelper.AddBackgroundBuffer(camera, _commandBuffer);
@@ -76,7 +87,7 @@ namespace Niantic.ARDK.Rendering
     protected override void OnRemoveFromCamera(Camera camera)
     {
       // Delegate fetching updates back to the session
-      if (Session is _NativeARSession nativeARSession)
+      if (_session is _NativeARSession nativeARSession)
         nativeARSession.SetUpdatingCamera(null);
       
       ARSessionBuffersHelper.RemoveBackgroundBuffer(camera, _commandBuffer);
@@ -117,6 +128,7 @@ namespace Niantic.ARDK.Rendering
 
     protected override void OnRelease()
     {
+      _session = null;
       _commandBuffer?.Dispose();
 
       if (_nativeTexture != null)

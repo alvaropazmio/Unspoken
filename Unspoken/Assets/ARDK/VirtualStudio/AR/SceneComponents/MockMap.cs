@@ -55,7 +55,7 @@ namespace Niantic.ARDK.VirtualStudio.AR.Mock
 
       _player = _VirtualStudioSessionsManager.Instance.LocalPlayer;
       var networking = _player.Networking;
-      var isHost = networking.Self.Equals(networking.Host);
+      var isHost = networking.Self != null && networking.Self.Equals(networking.Host);
 
       if (isHost)
       {

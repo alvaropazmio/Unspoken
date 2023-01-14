@@ -54,11 +54,16 @@ namespace Niantic.ARDKExamples.VirtualStudio
       _session = args.Session;
       _session.Deinitialized += OnWillDeinitialize;
 
-      if (_captureLocationToggle != null && _captureLocationToggle.isOn)
+      if (_captureLocationToggle == null || _captureLocationToggle.isOn)
       {
         _locationService = LocationServiceFactory.Create();
         _session.SetupLocationService(_locationService);
         _locationService.Start(1f, 0.0f);
+        Debug.Log("Recording location");
+      }
+      else
+      {
+        Debug.Log("NOT recording location");
       }
     }
 

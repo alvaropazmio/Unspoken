@@ -8,6 +8,13 @@ namespace Niantic.ARDK.Telemetry
 {
   public static class _TelemetryHelper
   {
+    public enum WayspotAnchorAction
+    {
+      Create,
+      Restore,
+      StatusUpdate
+    }
+    
     private static IARSession _session;
     
     public static void Start()
@@ -22,6 +29,7 @@ namespace Niantic.ARDK.Telemetry
       {
         SessionState = ARSessionEvent.Types.State.Created,
         BatteryLevel = SystemInfo.batteryLevel,
+        InstallMode = GetInstallMode(),
       });
 
       _session.Paused += LogEventOnSessionPaused;
@@ -38,6 +46,7 @@ namespace Niantic.ARDK.Telemetry
         {
           SessionState = ARSessionEvent.Types.State.Run,
           BatteryLevel = SystemInfo.batteryLevel,
+          InstallMode = GetInstallMode(),
         });
     }
 
@@ -48,6 +57,7 @@ namespace Niantic.ARDK.Telemetry
         {
           SessionState = ARSessionEvent.Types.State.Pause,
           BatteryLevel = SystemInfo.batteryLevel,
+          InstallMode = GetInstallMode(),
         });
     }
 
@@ -58,6 +68,7 @@ namespace Niantic.ARDK.Telemetry
         {
           SessionState = ARSessionEvent.Types.State.Disposed,
           BatteryLevel = SystemInfo.batteryLevel,
+          InstallMode = GetInstallMode(),
         });
 
       UnlinkSessionCloseEvents();
@@ -69,6 +80,7 @@ namespace Niantic.ARDK.Telemetry
       {
         SessionState = ARSessionEvent.Types.State.Disposed,
         BatteryLevel = SystemInfo.batteryLevel,
+        InstallMode = GetInstallMode(),
       });
 
       UnlinkSessionCloseEvents();
@@ -82,6 +94,11 @@ namespace Niantic.ARDK.Telemetry
       
       _session.Deinitialized -= LogEventOnSessionClose;
       _session.SessionFailed -= LogEventOnFailedSession;
+    }
+    
+    private static string GetInstallMode()
+    {
+      return $"install_mode:{Application.installMode.ToString()}";
     }
   }
 }

@@ -13,7 +13,7 @@ namespace Niantic.ARDK.AR.WayspotAnchors
     private Dictionary<Guid, _MockWayspotAnchor> _wayspotAnchors =
       new Dictionary<Guid, _MockWayspotAnchor>();
 
-    private List<Guid> _resolvedWayspotAnchors = new List<Guid>();
+    private HashSet<Guid> _resolvedWayspotAnchors = new HashSet<Guid>();
     protected bool _isDisposed;
     private LocalizationState _localizationState;
     private float _timeSinceLastStateUpdate;
@@ -71,41 +71,22 @@ namespace Niantic.ARDK.AR.WayspotAnchors
       {
         var anchor = _WayspotAnchorFactory.GetOrCreateFromIdentifier(anchorData.Key);
         createdWayspotAnchors.Add(anchor);
-        _wayspotAnchors.Add(anchor.ID, (_MockWayspotAnchor)anchor);
+        _wayspotAnchors[anchor.ID] = (_MockWayspotAnchor)anchor;
       }
 
       var wayspotAnchorsCreatedArgs = new WayspotAnchorsCreatedArgs(createdWayspotAnchors.ToArray());
       WayspotAnchorsCreated?.Invoke(wayspotAnchorsCreatedArgs);
-
-      var statuses = new List<WayspotAnchorStatusUpdate>();
-      foreach (var createdWayspotAnchor in createdWayspotAnchors)
-      {
-        var id = createdWayspotAnchor.ID;
-        statuses.Add(new WayspotAnchorStatusUpdate(id, WayspotAnchorStatusCode.Success));
-        ((_IInternalTrackable)createdWayspotAnchor).SetStatusCode(WayspotAnchorStatusCode.Success);
-      }
-
-      var wayspotAnchorStatusUpdatedArgs = new WayspotAnchorStatusUpdatedArgs(statuses.ToArray());
-      WayspotAnchorStatusUpdated?.Invoke(wayspotAnchorStatusUpdatedArgs);
     }
 
     public void StartResolvingWayspotAnchors(params IWayspotAnchor[] wayspotAnchors)
     {
-      var statuses = new List<WayspotAnchorStatusUpdate>();
       foreach (var anchor in wayspotAnchors)
       {
         _resolvedWayspotAnchors.Add(anchor.ID);
-        if (!_wayspotAnchors.ContainsKey(anchor.ID))
-        {
-          _wayspotAnchors.Add(anchor.ID, (_MockWayspotAnchor)anchor);
-          statuses.Add(new WayspotAnchorStatusUpdate(anchor.ID, WayspotAnchorStatusCode.Success));
-        }
 
-        ((_IInternalTrackable)anchor).SetStatusCode(WayspotAnchorStatusCode.Success);
+        // Add or update our reference to the anchor.
+        _wayspotAnchors[anchor.ID] = (_MockWayspotAnchor)anchor;
       }
-
-      var wayspotAnchorStatusUpdatedArgs = new WayspotAnchorStatusUpdatedArgs(statuses.ToArray());
-      WayspotAnchorStatusUpdated?.Invoke(wayspotAnchorStatusUpdatedArgs);
     }
 
     /// Stops resolving the wayspot anchors
@@ -125,14 +106,31 @@ namespace Niantic.ARDK.AR.WayspotAnchors
           continue;
 
         var resolutions = new List<WayspotAnchorResolvedArgs>();
+        var statusUpdates = new List<WayspotAnchorStatusUpdate>();
         foreach (var id in _resolvedWayspotAnchors)
         {
           var anchor = _wayspotAnchors[id];
-          ((_IInternalTrackable)anchor).SetTransform(anchor.LastKnownPosition, anchor.LastKnownRotation);
+          switch (anchor.Status)
+          {
+            case WayspotAnchorStatusCode.Pending:
+              var resolved = anchor.TryToResolve(out WayspotAnchorStatusCode status, out Vector3 pos, out Quaternion rot);
+              if (resolved)
+              {
+                statusUpdates.Add(new WayspotAnchorStatusUpdate(id, status));
+                if (status == WayspotAnchorStatusCode.Success)
+                  resolutions.Add(new WayspotAnchorResolvedArgs(id, pos, rot));
+              }
+              break;
 
-          var resolution = new WayspotAnchorResolvedArgs(id, anchor.LastKnownPosition, anchor.LastKnownRotation);
-          resolutions.Add(resolution);
+            case WayspotAnchorStatusCode.Success:
+              var resolution = new WayspotAnchorResolvedArgs(id, anchor.LastKnownPosition, anchor.LastKnownRotation);
+              resolutions.Add(resolution);
+              break;
+          }
         }
+
+        var statusUpdateArgs = new WayspotAnchorStatusUpdatedArgs(statusUpdates.ToArray());
+        WayspotAnchorStatusUpdated?.Invoke(statusUpdateArgs);
 
         var wayspotAnchorsResolvedArgs = new WayspotAnchorsResolvedArgs(resolutions.ToArray());
         WayspotAnchorsResolved?.Invoke(wayspotAnchorsResolvedArgs);

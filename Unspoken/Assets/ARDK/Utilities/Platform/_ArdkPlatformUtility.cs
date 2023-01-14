@@ -2,6 +2,8 @@ using System;
 using System.Runtime.InteropServices;
 
 using Niantic.ARDK.Utilities.Logging;
+using UnityEditor;
+using UnityEngine;
 
 namespace Niantic.ARDK.Utilities
 {
@@ -10,6 +12,9 @@ namespace Niantic.ARDK.Utilities
     // only caching this value because remote needs it on a per frame basis
     public static readonly bool AreNativeBinariesAvailable;
 
+    private const string DIALOG_TITLE = "Niantic Lightship";
+    const string SAW_PLATFORM_DIALOG_KEY = "SawPlatformSupportDialog";
+    
     static _ArdkPlatformUtility()
     {
       AreNativeBinariesAvailable = _IsNativeSupportEnabled();
@@ -23,27 +28,70 @@ namespace Niantic.ARDK.Utilities
       return true;
 
 #else
-      // Macbooks which are M1 processors or are Catalina and below do not have native support
-      bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-      bool isMacCompatibleWithNative = true;
-      if (isMacOS)
+      var sawDialog = PlayerPrefs.GetInt(SAW_PLATFORM_DIALOG_KEY, 0) == 1;
+      
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
       {
-        if (_IsM1Processor() || !_IsOperatingSystemBigSurAndAbove())
+        if (!_IsOperatingSystemBigSurAndAbove())
         {
-          isMacCompatibleWithNative = false;
+          if (sawDialog)
+            return false;
+          
+          // Macbooks which are Catalina and below do not have native support
+          const string bigSurMessage =
+            "Native ARDK support is unavailable running the Unity Editor on macOS Catalina and older. " +
+            "Please upgrade your operating system to macOS Big Sur or newer.";
+        
+          EditorUtility.DisplayDialog(DIALOG_TITLE, bigSurMessage, "OK");
+          PlayerPrefs.SetInt(SAW_PLATFORM_DIALOG_KEY, 1);
+          return false;
         }
+       
+        if (IsUsingRosetta())
+        {
+          if (sawDialog)
+            return false;
+          
+          // On Apple Silicon, don't use the Rosetta version of Unity but download Apple Silicon version
+          const string siliconMessage =
+            "Native ARDK support is unavailable in Unity Editors running through Rosetta on Apple Silicon MacBooks. " +
+            "Please open this project in a version of Unity that runs natively on Apple Silicon.";
+        
+          EditorUtility.DisplayDialog(DIALOG_TITLE, siliconMessage, "OK");
+          PlayerPrefs.SetInt(SAW_PLATFORM_DIALOG_KEY, 1);
+          return false;
+        }
+        
+        ARLog._Debug("Native ARDK support is enabled for this platform");
+        return true;
       }
 
-      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ||
-          !isMacCompatibleWithNative)
-      {
-        // return 0 as native handler for windows, m1 macbooks and macbooks below BigSur
-        ARLog._Debug("Native support is disabled for this platform.");
+      if (sawDialog)
         return false;
+      
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      {
+        const string windowsMessage = 
+          "Native ARDK support is unavailable running Unity Editor on Windows. " + 
+          "Development is supported but certain features will be disabled.";
+          
+        var openLink = EditorUtility.DisplayDialog(DIALOG_TITLE, windowsMessage, "Learn More", "OK");
+        if (openLink)
+          Application.OpenURL("https://niantic.dev/docs/ardk/ardk_fundamentals/system_reqs.html#developing-on-windows");
+      }
+      else
+      {
+        const string otherPlatformMessage = 
+          "Native ARDK support is unavailable running Unity Editor on this platform. " + 
+          "Development may be possible but certain features will be disabled.";
+          
+        var openLink = EditorUtility.DisplayDialog(DIALOG_TITLE, otherPlatformMessage, "Learn More", "OK");
+        if (openLink)
+          Application.OpenURL("https://niantic.dev/docs/ardk/ardk_fundamentals/system_reqs.html");
       }
 
-      ARLog._Debug("Native support is enabled for this platform");
-      return true;
+      PlayerPrefs.SetInt(SAW_PLATFORM_DIALOG_KEY, 1);
+      return false;
 #endif
     }
 
@@ -57,11 +105,11 @@ namespace Niantic.ARDK.Utilities
     public static bool IsUsingRosetta()
     {
       return
-        _IsM1Processor() &&
+        _IsAppleSiliconProcessor() &&
         RuntimeInformation.ProcessArchitecture == Architecture.X64;
     }
 
-    private static bool _IsM1Processor()
+    private static bool _IsAppleSiliconProcessor()
     {
       /*
        * https://developer.apple.com/documentation/apple-silicon/about-the-rosetta-translation-environment

@@ -147,11 +147,6 @@ namespace Niantic.ARDK.VirtualStudio.AR.Mock
     {
       // Instantiate a new Unity camera
       _imageCamera = CreateCameraBase("Image");
-      
-      // Cache the correct values so they can be used instead of potentially incorrect values
-      // due to this bug: Unity Issue-598763
-      _MockCameraConfiguration.CorrectedScreenWidth = _imageCamera.pixelWidth;
-      _MockCameraConfiguration.CorrectedScreenHeight = _imageCamera.pixelHeight;
 
       // Configure the camera to use physical properties
       _imageCamera.usePhysicalProperties = true;

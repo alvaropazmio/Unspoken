@@ -1,7 +1,5 @@
 // Copyright 2022 Niantic, Inc. All Rights Reserved.
 
-using System;
-
 using UnityEngine;
 
 namespace Niantic.ARDK.VirtualStudio.AR
@@ -41,34 +39,6 @@ namespace Niantic.ARDK.VirtualStudio.AR
     {
       get { return PlayerPrefs.GetInt(SCROLLDIRECTION_KEY, _DefaultScrollDirection); }
       set { PlayerPrefs.SetInt(SCROLLDIRECTION_KEY, value);}
-    }
-
-    // Cannot use Unity's Screen properties in Editor due to this bug: Unity Issue-598763
-    private static int _correctedScreenWidth;
-    internal static int CorrectedScreenWidth
-    {
-      get
-      {
-        return _correctedScreenWidth;
-      }
-      set
-      {
-        _correctedScreenWidth = value;
-      }
-    }
-
-    private static int _correctedScreenHeight;
-
-    internal static int CorrectedScreenHeight
-    {
-      get
-      {
-        return _correctedScreenHeight;
-      }
-      set
-      {
-        _correctedScreenHeight = value;
-      }
     }
   }
 }

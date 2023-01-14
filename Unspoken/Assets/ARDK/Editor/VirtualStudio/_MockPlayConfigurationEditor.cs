@@ -98,9 +98,7 @@ namespace Niantic.ARDK.VirtualStudio.Editor
 
       DrawPlayers();
     }
-
-
-
+    
     private void DrawMockSceneGUI()
     {
       EditorGUILayout.BeginHorizontal();
@@ -108,6 +106,7 @@ namespace Niantic.ARDK.VirtualStudio.Editor
       if (_mockSceneNames == null)
         LoadMockScenes();
 
+      _selectedMockSceneIndex = Array.IndexOf(_mockSceneGuids, Launcher.SceneGuid) + 1;
       var newMockSceneIndex =
         EditorGUILayout.Popup("Mock Scene: ", _selectedMockSceneIndex, _mockSceneNames);
 

@@ -8,7 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/UI Mockup.unity
     guid: 068b2733a41d04d459c520b09e82d75c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/AR Mockup.unity
     guid: 540ce161eff187544bd720c03607c79d
+  - enabled: 1
+    path: Assets/Scenes/Geospatial Testing.unity
+    guid: a6b7fee49b373384bbcfdf766e3a09b4
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

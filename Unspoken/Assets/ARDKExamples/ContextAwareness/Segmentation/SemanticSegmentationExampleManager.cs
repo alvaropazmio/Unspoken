@@ -6,9 +6,12 @@ using Niantic.ARDK.AR.Awareness.Semantics;
 using Niantic.ARDK.Configuration;
 using Niantic.ARDK.Extensions;
 using Niantic.ARDK.Rendering;
+using Niantic.ARDK.Utilities.Tracing;
 
 using UnityEngine;
 using UnityEngine.UI;
+
+using Debug = UnityEngine.Debug;
 
 namespace Niantic.ARDKExamples
 {
@@ -69,6 +72,10 @@ namespace Niantic.ARDKExamples
       // Enable the UI when the semantic segmentation stream starts
       _semanticSegmentationManager.SemanticBufferInitialized += EnableUserInterface;
       _semanticSegmentationManager.SemanticBufferUpdated += OnSemanticBufferUpdated;
+
+      // Start ARDK tracing
+      Debug.LogFormat("Start tracing...");
+      ARDKTrace.StartTracing();
     }
 
     private void OnSemanticBufferUpdated(ContextAwarenessStreamUpdatedArgs<ISemanticBuffer> args)
@@ -130,6 +137,10 @@ namespace Niantic.ARDKExamples
         Destroy(_semanticTexture);
       
       _semanticSegmentationManager.SemanticBufferUpdated -= OnSemanticBufferUpdated;
+
+      // Stop ARDK tracing
+      Debug.LogFormat("Stop tracing...");
+      ARDKTrace.StopTracing();
     }
 
     private void EnableUserInterface(ContextAwarenessArgs<ISemanticBuffer> args)

@@ -1,7 +1,6 @@
 // Copyright 2022 Niantic, Inc. All Rights Reserved.
 
 using System;
-
 using Niantic.ARDK.AR.Protobuf;
 using Niantic.ARDK.Configuration.Internal;
 using Niantic.ARDK.Networking;
@@ -25,6 +24,7 @@ namespace Niantic.ARDK.Configuration
       // Note: We can create a _NativeFeaturePreloader without setting the AccessMode to Native, 
       // and then the preloader will download from default URLs instead of ones set in the ArdkGlobalConfig.
       // There's currently no important use case where that's relevant though, so leaving the bug as known but unresolved.
+      
       _ImplementationType implementationType = _ImplementationType.Native;
 
       if (!_ArdkPlatformUtility.AreNativeBinariesAvailable)
@@ -151,7 +151,7 @@ namespace Niantic.ARDK.Configuration
     {
       if (userId == null)
         userId = string.Empty;
-    
+      
       return SetUserId(userId);
     }
 
@@ -163,7 +163,7 @@ namespace Niantic.ARDK.Configuration
     {
       return SetUserId(string.Empty);
     }
- 
+
     private static bool SetUserId(string userId)
     {
       var result = _impl.SetUserIdOnLogin(userId);
@@ -174,7 +174,7 @@ namespace Niantic.ARDK.Configuration
 
       return result;
     }
-    
+
     internal static NetworkingErrorCode _VerifyApiKeyWithFeature(string feature, bool isAsync = true)
     {
       return _impl.VerifyApiKeyWithFeature(feature, isAsync);

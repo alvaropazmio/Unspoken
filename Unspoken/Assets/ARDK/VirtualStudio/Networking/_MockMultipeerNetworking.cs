@@ -316,42 +316,6 @@ namespace Niantic.ARDK.VirtualStudio.Networking.Mock
         handler(new PeerRemovedArgs(peer));
     }
 
-    /// <summary>
-    /// Call to invoke a DataReceivedFromArm event on this _MockNetworkingCommandsRouter.
-    /// </summary>
-    /// <param name="args"></param>
-    internal void _ReceiveDataFromArm(DataReceivedFromArmArgs args)
-    {
-      var handler = DataReceivedFromArm;
-
-      if (handler != null)
-        handler(args);
-    }
-
-    /// <summary>
-    /// Call to invoke a SessionStatusReceivedFromArm event on this _MockNetworkingCommandsRouter.
-    /// </summary>
-    /// <param name="args"></param>
-    internal void _ReceiveStatusFromArm(SessionStatusReceivedFromArmArgs args)
-    {
-      var handler = SessionStatusReceivedFromArm;
-
-      if (handler != null)
-        handler(args);
-    }
-
-    /// <summary>
-    /// Call to invoke a SessionResultReceivedFromArm event on this _MockNetworkingCommandsRouter.
-    /// </summary>
-    /// <param name="args"></param>
-    internal void _ReceiveResultFromArm(SessionResultReceivedFromArmArgs args)
-    {
-      var handler = SessionResultReceivedFromArm;
-
-      if (handler != null)
-        handler(args);
-    }
-
     public RuntimeEnvironment RuntimeEnvironment
     {
       get { return RuntimeEnvironment.Mock; }
@@ -374,10 +338,6 @@ namespace Niantic.ARDK.VirtualStudio.Networking.Mock
     public event ArdkEventHandler<PeerRemovedArgs> PeerRemoved;
     public event ArdkEventHandler<PersistentKeyValueUpdatedArgs> PersistentKeyValueUpdated;
     public event ArdkEventHandler<DeinitializedArgs> Deinitialized;
-
-    public event ArdkEventHandler<DataReceivedFromArmArgs> DataReceivedFromArm;
-    public event ArdkEventHandler<SessionStatusReceivedFromArmArgs> SessionStatusReceivedFromArm;
-    public event ArdkEventHandler<SessionResultReceivedFromArmArgs> SessionResultReceivedFromArm;
 
     private ArdkEventHandler<ConnectedArgs> _connected;
     public event ArdkEventHandler<ConnectedArgs> Connected

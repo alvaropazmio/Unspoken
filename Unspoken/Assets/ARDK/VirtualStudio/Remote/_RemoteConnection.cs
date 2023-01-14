@@ -167,8 +167,7 @@ namespace Niantic.ARDK.VirtualStudio.Remote
           break;
 
         case ConnectionMethod.Internet:
-          _remoteConnectionImpl = new _InternetRemoteConnectionCompat();
-          break;
+          throw new InvalidOperationException();
 
         default:
           throw new ArgumentOutOfRangeException();

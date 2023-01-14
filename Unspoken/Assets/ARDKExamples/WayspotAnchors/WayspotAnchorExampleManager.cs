@@ -78,7 +78,7 @@ namespace Niantic.ARDKExamples.WayspotAnchors
     {
       if (WayspotAnchorService != null)
       {
-        WayspotAnchorService.LocalizationStateUpdated -= LocalizationStateUpdated;
+        WayspotAnchorService.LocalizationStateUpdated -= OnLocalizationStateUpdated;
         WayspotAnchorService.Dispose();
       }
     }
@@ -211,7 +211,9 @@ namespace Niantic.ARDKExamples.WayspotAnchors
 
     private void OnLocalizationStateUpdated(LocalizationStateUpdatedArgs args)
     {
-      _localizationStatus.text = "Localization status: " + args.State;
+      _localizationStatus.text =
+        $"Localization Status: {args.State} " +
+        (args.State == LocalizationState.Failed ? $"(Reason: {args.FailureReason})" : "");
     }
 
     private WayspotAnchorService CreateWayspotAnchorService()
@@ -230,14 +232,7 @@ namespace Niantic.ARDKExamples.WayspotAnchors
           _config
         );
 
-      wayspotAnchorService.LocalizationStateUpdated += LocalizationStateUpdated;
-
       return wayspotAnchorService;
-    }
-
-    private void LocalizationStateUpdated(LocalizationStateUpdatedArgs args)
-    {
-      _localizationStatus.text = args.State.ToString();
     }
 
     private void PlaceAnchor(Matrix4x4 localPose)

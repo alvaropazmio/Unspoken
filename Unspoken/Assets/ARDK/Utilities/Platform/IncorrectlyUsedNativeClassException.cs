@@ -8,7 +8,7 @@ namespace Niantic.ARDK.AR
     : Exception
   {
     private const string IncorrectNativeClassMessage =
-      "Using a Native class with no testing/non-native fallback on a non-native platform";
+      "Native ARDK support is disabled for this platform.";
 
     public IncorrectlyUsedNativeClassException()
       : base(IncorrectNativeClassMessage)
