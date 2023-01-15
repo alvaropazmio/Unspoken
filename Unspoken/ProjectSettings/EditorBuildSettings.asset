@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PlaneSetup.unity
+    path: Assets/Scenes/PlaneSetup_Kaan.unity
     guid: a540d3dafba98c440ad5d0536bd0b47b
   m_configObjects: {}
