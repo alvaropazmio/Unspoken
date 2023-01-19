@@ -2011,7 +2011,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ballPrefab: {fileID: 4391029338446301491, guid: b7a9ce14435e4184f898871b87e3a038, type: 3}
-  force: 150
+  force: 250
 --- !u!4 &1036565892
 Transform:
   m_ObjectHideFlags: 0
@@ -2368,7 +2368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1350457388
 Transform:
   m_ObjectHideFlags: 0
