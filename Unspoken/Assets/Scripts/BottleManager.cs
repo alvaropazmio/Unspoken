@@ -49,11 +49,13 @@ public class BottleManager : MonoBehaviour
 
 
     public enum State { Setup, Welcome, ScanMain, ScanTerrain, MainGame}
+    [HideInInspector]
     public State currentState;
+    public State initialState;
 
     private void Awake()
     {
-        currentState = State.Setup;
+        currentState = initialState;
 
         for (int i = 0; i < bottleCount; i++)
         {

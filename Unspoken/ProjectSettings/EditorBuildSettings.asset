@@ -11,10 +11,19 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/AR Mockup.unity
     guid: 540ce161eff187544bd720c03607c79d
-  - enabled: 1
-    path: Assets/Scenes/Geospatial Testing.unity
-    guid: a6b7fee49b373384bbcfdf766e3a09b4
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/ARDKExamples/WayspotAnchors/WayspotAnchors.unity
+    guid: 3477628c2e7624b9386c43bf7c008d15
+  - enabled: 0
+    path: Assets/Scenes/VPS Setup.unity
+    guid: 59b2a113a7adcac428be305e7be33c79
+  - enabled: 1
+    path: Assets/Scenes/Build Scenes/WelcomeScene.unity
+    guid: b5019273904d25a4aa67afba7685cb18
+  - enabled: 1
+    path: Assets/Scenes/Build Scenes/MainGame.unity
+    guid: a6b7fee49b373384bbcfdf766e3a09b4
   m_configObjects: {}

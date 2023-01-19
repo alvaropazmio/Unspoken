@@ -83,21 +83,24 @@ namespace Niantic.ARDKExamples.WayspotAnchors
       }
     }
 
-    private void Update()
+    protected virtual void Update()
     {
       if (WayspotAnchorService == null)
         return;
+    }
 
-      // Do hit test from where player taps on screen
-      var touchSuccess = TryGetTouchInput(out Matrix4x4 localPose);
+    private void HitTest()
+    {
+        // Do hit test from where player taps on screen
+        var touchSuccess = TryGetTouchInput(out Matrix4x4 localPose);
 
-      if (touchSuccess)
-      {
+        if (touchSuccess)
+        {
         if (WayspotAnchorService.LocalizationState == LocalizationState.Localized)
-          PlaceAnchor(localPose); //Create the Wayspot Anchor and place the GameObject
+            PlaceAnchor(localPose); //Create the Wayspot Anchor and place the GameObject
         else
-          _statusLog.text = "Must localize before placing anchor.";
-      }
+            _statusLog.text = "Must localize before placing anchor.";
+        }
     }
 
     /// Saves all of the existing wayspot anchors
@@ -235,7 +238,7 @@ namespace Niantic.ARDKExamples.WayspotAnchors
       return wayspotAnchorService;
     }
 
-    private void PlaceAnchor(Matrix4x4 localPose)
+    protected virtual void PlaceAnchor(Matrix4x4 localPose)
     {
       var anchors = WayspotAnchorService.CreateWayspotAnchors(localPose);
       if (anchors.Length == 0)

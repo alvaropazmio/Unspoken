@@ -15,6 +15,8 @@ public class SceneManager : MonoBehaviour
     //public Camera _mainCamera;  //This will reference the MainCamera in the scene, so the ARDK can leverage the device camera
     IARSession _ARsession;  //An ARDK ARSession is the main piece that manages the AR experience
 
+    public static object LoadScene { get; internal set; }
+
     // Start is called before the first frame update
     void Start()
     {
