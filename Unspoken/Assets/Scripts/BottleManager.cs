@@ -49,9 +49,12 @@ public class BottleManager : MonoBehaviour
 
 
     public enum State { Setup, Welcome, ScanMain, ScanTerrain, MainGame}
-    [HideInInspector]
+    //[HideInInspector]
     public State currentState;
     public State initialState;
+
+    private QuestionsManager questionManager;
+
 
     private void Awake()
     {
@@ -59,7 +62,7 @@ public class BottleManager : MonoBehaviour
 
         for (int i = 0; i < bottleCount; i++)
         {
-            CreateNewBottle();
+            CreateNewBottle(" ERROR ", " ERROR ") ;
         }
 
     }
@@ -68,6 +71,7 @@ public class BottleManager : MonoBehaviour
     {
         //BottleActions.OnBottleLoaded += CreateNewBottle;
         BottleActions.OnBottleLoaded += RegisterBottle;
+        //VPSStatus.OnLocalized += SwitchToMainGame;
 
     }
 
@@ -75,16 +79,20 @@ public class BottleManager : MonoBehaviour
     {
         //BottleActions.OnBottleLoaded -= CreateNewBottle;
         BottleActions.OnBottleLoaded -= RegisterBottle;
+        //VPSStatus.OnLocalized -= SwitchToMainGame;
+
     }
 
     private void Start()
     {
-        //this feels ilegal
+        currentState = State.Setup;
         BottleActions.OnBottlePrefabSent(bottlePrefab);
+        currentState = State.MainGame;
     }
 
 
-    public void CreateNewBottle()
+
+    public void CreateNewBottle(string question, string answer)
     {
         var go = Instantiate(bottlePrefab, Vector3.zero, Quaternion.identity);
 
@@ -99,7 +107,7 @@ public class BottleManager : MonoBehaviour
         }
         else if (currentState == State.MainGame)
         {
-            newBottle.ThrowNew(bottleDisplayer);
+            newBottle.ThrowNew(bottleDisplayer,question,answer);
         }
 
     }
@@ -114,6 +122,7 @@ public class BottleManager : MonoBehaviour
 
     private void Update()
     {
+        /*
         switch (currentState)
         {
             case State.Setup:
@@ -136,7 +145,11 @@ public class BottleManager : MonoBehaviour
                 break;
             default:
                 break;
-        }
+        }*/
+
+        if (!GetTouch()) return;
+        SelectBottle(currentTouch);
+
     }
 
     private bool GetTouch()

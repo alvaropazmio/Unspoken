@@ -139,7 +139,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
                 CreateLoadedGameObject(anchors[0], Vector3.zero, Quaternion.identity, true);
             }
-            UpdateLocalisationStatus($"Loaded {_wayspotAnchorTrackers.Count} anchors.");
+            //UpdateLocalisationStatus($"Loaded {_wayspotAnchorTrackers.Count} anchors.");
             Debug.Log($"Ammount of anchors in payload: {payloads.Count()}");
         }
         else
@@ -271,6 +271,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
                 _config
             );
 
+        wayspotAnchorService.LocalizationStateUpdated += LocalizationStateUpdated;
 
         return wayspotAnchorService;
     }

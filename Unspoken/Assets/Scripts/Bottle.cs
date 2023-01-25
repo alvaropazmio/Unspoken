@@ -2,9 +2,9 @@ using Niantic.ARDK.Utilities.Input.Legacy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 
-//Bug, when the player moves around, the text will persist until idle state
 public class Bottle : MonoBehaviour
 {
     [HideInInspector]
@@ -19,9 +19,13 @@ public class Bottle : MonoBehaviour
     private float thrust = 150;
 
     [SerializeField]
-    private GameObject ARText;
+    private GameObject questionGO;
     [SerializeField]
-    private GameObject ARButton;
+    private GameObject answerGO;
+    [SerializeField]
+    private TMP_Text questionText;
+    [SerializeField]
+    private TMP_Text answerText;
 
     private enum State { Idle, Open, Display, Close, Throw}
     [SerializeField]
@@ -36,6 +40,9 @@ public class Bottle : MonoBehaviour
 
     private void Awake()
     {
+        questionText = questionGO.GetComponent<TMP_Text>();
+        answerText = answerGO.GetComponent<TMP_Text>();
+
         currentState = State.Idle;
         rigidBody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -46,21 +53,22 @@ public class Bottle : MonoBehaviour
         switch (currentState)
         {
             case State.Idle:
-                ARText.SetActive(false);
-                ARButton.SetActive(false);
+                questionGO.SetActive(false);
+                answerGO.SetActive(false);
+                //ARButton.SetActive(false);
                 transform.Translate(Vector3.left * idleSpeed * Time.deltaTime);
                 break;
             case State.Open:
                 MoveTowardsPlayer();
                 break;
             case State.Display:
-                ARText.SetActive(true);
-                ARButton.SetActive(true);
+                answerGO.SetActive(true);
+                //ARButton.SetActive(true);
                 break;
             case State.Close:
                 animator.SetBool("Selected", false);
-                ARText.SetActive(false);
-                ARButton.SetActive(false);
+                answerGO.SetActive(false);
+                //ARButton.SetActive(false);
                 break;
             case State.Throw:
                 ThrowBack();
@@ -110,11 +118,14 @@ public class Bottle : MonoBehaviour
         ChangeState("Idle");
     }
 
-    public void ThrowNew(GameObject displayerGO)
+    public void ThrowNew(GameObject displayerGO,string question, string answer)
     {
         displayPoint = displayerGO.transform;
         transform.position = displayPoint.position;
         transform.rotation = displayPoint.rotation;
+
+        questionText.text = question;
+        answerText.text = answer;
 
         rigidBody.isKinematic = false;
         rigidBody.useGravity = true;
