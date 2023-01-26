@@ -97,12 +97,13 @@ public class Bottle : MonoBehaviour
     {
         rigidBody.isKinematic = true;
         rigidBody.useGravity = false;
-        transform.position = Vector3.MoveTowards(transform.position, displayPoint.position, approachVelocity);
-        transform.rotation = Camera.main.transform.rotation;
+        transform.position = Vector3.MoveTowards(transform.position,  displayPoint.position, approachVelocity);
+        transform.rotation = displayPoint.transform.rotation;
 
         float distance = Vector3.Distance(transform.position, displayPoint.position);
         if (distance <= 0)
         {
+            Debug.Log("BottleSelected");
             animator.SetBool("Selected", true);
         }
     }

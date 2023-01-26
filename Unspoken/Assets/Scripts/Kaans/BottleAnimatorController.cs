@@ -14,14 +14,17 @@ public class BottleAnimatorController : MonoBehaviour
 
     public void BottleOpening()
     {
-        animBottle.SetBool("Open", true);
+        animBottle.SetBool("Selected", true);
     }
     public void BottleClosing()
     {
-        animBottle.SetBool("Open", false);
+        animBottle.SetBool("Selected", false);
     }
 
-
+    public void BottleOpen(bool open_)
+    {
+        animBottle.SetBool("Open", open_);
+    }
 
 
 
