@@ -1,19 +1,3 @@
-//Under construction, manager script merging the SelectOnTouch and the ThrowOnTap scripts
-
-//To Do:
-// Enums *
-// Object pool bottles * 
-// Migrate Throw on Touch *
-// Three Empty states for 
-//Welcome *
-//Scan main spot *
-//Scan for water *
-// Migrate Select on Touch *
-// Check for Touch *
-// State Machine switching between Setup and game *
-// Handle Actions and events * (didn't need any events in this script)
-// Create new Bottle and throw *
-
 using Niantic.ARDK.AR.WayspotAnchors;
 using Niantic.ARDK.Extensions;
 using Niantic.ARDK.Utilities.Input.Legacy;
@@ -32,6 +16,9 @@ public class BottleManager : MonoBehaviour
     [SerializeField]
     private GameObject bottleDisplayer;
     private Bottle selectedBottle;
+
+    private string currentQuestion;
+    private string currentAnswer;
 
     [SerializeField]
     int bottleCount;
@@ -58,6 +45,7 @@ public class BottleManager : MonoBehaviour
 
     private void Awake()
     {
+        //BottleActions.OnBottlePrefabSent(bottlePrefab);
         currentState = initialState;
 
         for (int i = 0; i < bottleCount; i++)
@@ -86,30 +74,52 @@ public class BottleManager : MonoBehaviour
     private void Start()
     {
         currentState = State.Setup;
-        BottleActions.OnBottlePrefabSent(bottlePrefab);
         currentState = State.MainGame;
     }
 
-
+    
 
     public void CreateNewBottle(string question, string answer)
     {
-        var go = Instantiate(bottlePrefab, Vector3.zero, Quaternion.identity);
-
-        Bottle newBottle = go.GetComponent<Bottle>();
+        var bottleGO = Instantiate(bottlePrefab, bottleStorage.transform.position, Quaternion.identity);
+        Bottle newBottle = bottleGO.GetComponent<Bottle>();
 
         bottlePool.Add(newBottle);
-        bottleDictionary.Add(go, newBottle);
+        bottleDictionary.Add(bottleGO, newBottle);
 
+        
         if (currentState == State.Setup)
         {
             newBottle.gameObject.SetActive(false);
         }
         else if (currentState == State.MainGame)
         {
-            newBottle.ThrowNew(bottleDisplayer,question,answer);
+            newBottle.Activate(bottleDisplayer);
+            selectedBottle = newBottle;
+            currentQuestion = question;
+            currentAnswer = answer;
+            //newBottle.ThrowNew(bottleDisplayer,question,answer);
         }
 
+    }
+
+    public void CloseSelectedBottle()
+    {
+        if (selectedBottle != null)
+        {
+            selectedBottle.ChangeState("Close");
+        }
+    }
+
+    public void ThrowNewBottle()
+    {
+        if (selectedBottle != null)
+        {
+            selectedBottle.ThrowNew(bottleDisplayer, currentQuestion, currentAnswer);
+            selectedBottle = null;
+            currentQuestion = null;
+            currentAnswer = null;
+        }
     }
 
     private void RegisterBottle(GameObject bottleGO)

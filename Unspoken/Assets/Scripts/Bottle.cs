@@ -13,7 +13,7 @@ public class Bottle : MonoBehaviour
     
     private Transform displayPoint;
 
-    private float approachVelocity = 0.2f;
+    private float approachVelocity = 0.1f;
     private float idleSpeed = 0.06f;
     //this value also exists on Bottle Manager, it would be better to have a gobal value that manages this
     private float thrust = 150;
@@ -55,7 +55,6 @@ public class Bottle : MonoBehaviour
             case State.Idle:
                 questionGO.SetActive(false);
                 answerGO.SetActive(false);
-                //ARButton.SetActive(false);
                 transform.Translate(Vector3.left * idleSpeed * Time.deltaTime);
                 break;
             case State.Open:
@@ -68,6 +67,7 @@ public class Bottle : MonoBehaviour
             case State.Close:
                 animator.SetBool("Selected", false);
                 answerGO.SetActive(false);
+                questionGO.SetActive(false);
                 //ARButton.SetActive(false);
                 break;
             case State.Throw:
@@ -84,10 +84,6 @@ public class Bottle : MonoBehaviour
         {
             if (wayspotEnabled)
                 return;
-
-            //CreateWayspot(out Matrix4x4 localPose);
-            //WayspotCreated.Invoke(localPose);
-            Debug.Log("wow");
             wayspotEnabled = true;
             BottleActions.OnWayspotRequested(this);
         }
@@ -103,7 +99,6 @@ public class Bottle : MonoBehaviour
         float distance = Vector3.Distance(transform.position, displayPoint.position);
         if (distance <= 0)
         {
-            Debug.Log("BottleSelected");
             animator.SetBool("Selected", true);
         }
     }

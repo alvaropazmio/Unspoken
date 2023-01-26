@@ -17,6 +17,7 @@ using UnityEngine.UI;
 
 public class CustomWaySpotAnchorManager : MonoBehaviour
 {
+    [SerializeField]
     private GameObject _bottlePrefab;
 
     private IARSession _arSession;
@@ -25,6 +26,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
     private IWayspotAnchorsConfiguration _config;
 
     private readonly HashSet<WayspotAnchorTracker> _wayspotAnchorTrackers = new HashSet<WayspotAnchorTracker>();
+    private HashSet<IWayspotAnchor[]> _savedAnchorTrackers = new HashSet<IWayspotAnchor[]>();
 
     public delegate void TextUpdateHandler(string localisationStatus);
     public event TextUpdateHandler Updated;
@@ -115,6 +117,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
             var payloads = savableAnchors.Select(a => a.Payload);
             Debug.Log("Array Payload = " + payloads.Count());
             WayspotAnchorDataUtility.SaveLocalPayloads(payloads.ToArray());
+            _savedAnchorTrackers.Add(wayspotAnchors);
         }
         else
         {
@@ -156,13 +159,26 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
             bool startActive
         )
     {
+        if (position ==  null || rotation == null || _bottlePrefab == null)
+        {
+            Debug.Log("no");
+            return null;
+        }
+
+
         var go = Instantiate(_bottlePrefab, position, rotation);
 
+        if (go == null)
+        {
+            Debug.Log("here");
+            return null;
+        }
         var tracker = go.GetComponent<WayspotAnchorTracker>();
         if (tracker == null)
         {
             Debug.Log("Anchor prefab was missing WayspotAnchorTracker, so one will be added.");
             tracker = go.AddComponent<WayspotAnchorTracker>();
+            return null;
         }
 
         tracker.gameObject.SetActive(startActive);

@@ -24,7 +24,6 @@ public class QuestionsManager : MonoBehaviour
         var Lines = file.text.Split(splitFile, System.StringSplitOptions.RemoveEmptyEntries);
         for (int i = 0; i < Lines.Length; i++)
         {
-            print("Line = " + Lines[i]);
             questions.Add(Lines[i]);
         }
     }

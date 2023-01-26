@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -504,11 +504,11 @@ Transform:
   m_GameObject: {fileID: 68741481}
   m_LocalRotation: {x: -0.25262386, y: 0.877738, z: -0.23626964, w: -0.3315627}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.99999994}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 1581108597}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 35.612, y: 214.688, z: -20.657}
 --- !u!1 &156115409 stripped
 GameObject:
@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 200760009}
   - component: {fileID: 200760008}
   m_Layer: 0
-  m_Name: Button
+  m_Name: Restart Service
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -661,67 +661,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 200760006}
   m_CullTransparentMesh: 1
---- !u!1001 &242569431
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 272187393}
-    m_Modifications:
-    - target: {fileID: 8183483478926556645, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_Name
-      value: BottleOpen
-      objectReference: {fileID: 0}
-    - target: {fileID: 8183483478926556645, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.022
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.61399996
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852461071185848159, guid: 853db07beb739ef44931963df0053199, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 853db07beb739ef44931963df0053199, type: 3}
 --- !u!1 &243837541
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,7 +775,7 @@ GameObject:
   - component: {fileID: 248349132}
   - component: {fileID: 248349131}
   m_Layer: 0
-  m_Name: Button
+  m_Name: Reset Anchors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -918,6 +857,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1257914418}
+        m_TargetAssemblyTypeName: CustomWaySpotAnchorManager, Assembly-CSharp
+        m_MethodName: LoadWayspotAnchors
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &248349132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -961,112 +912,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3381041692372307289, guid: e91d6d15f11cc4ad29bb1a41ae9aa381, type: 3}
   m_PrefabInstance: {fileID: 1934680465}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &332276533
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 272187393}
-    m_Modifications:
-    - target: {fileID: 1070427491143149001, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3491553320536466252, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3491553320536466252, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_IsKinematic
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.022
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.61399996
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 4016016006485463945, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4391029338446301491, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_Name
-      value: PhysicBottle
-      objectReference: {fileID: 0}
-    - target: {fileID: 4391029338446301491, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5031774155029388931, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5192304809352645490, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6612680898876424120, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_CastShadows
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6855218502707738007, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7550671902436388695, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8238914001168474929, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8620539436943101682, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8682611145592597170, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-      propertyPath: m_Avatar
-      value: 
-      objectReference: {fileID: 9000000, guid: 3d86dd006fb4f3c41b808524304e41a8, type: 3}
-    m_RemovedComponents:
-    - {fileID: 1966511211880777036, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-  m_SourcePrefab: {fileID: 100100000, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
 --- !u!1 &404746142
 GameObject:
   m_ObjectHideFlags: 0
@@ -1392,7 +1237,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1589738810}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BottleAnimatorController, Assembly-CSharp
         m_MethodName: BottleOpen
         m_Mode: 6
@@ -2419,6 +2264,7 @@ Transform:
   - {fileID: 243837545}
   - {fileID: 25952880}
   - {fileID: 761004848}
+  - {fileID: 1493232131}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2510,11 +2356,11 @@ Transform:
   m_GameObject: {fileID: 1037845082}
   m_LocalRotation: {x: 0.060006805, y: 0.7570294, z: -0.34064838, w: 0.5543144}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.99999994}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 1581108597}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 35.612, y: 100.875, z: -20.657}
 --- !u!1 &1099196675
 GameObject:
@@ -2604,11 +2450,11 @@ Transform:
   m_GameObject: {fileID: 1099196675}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.99999994}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 1581108597}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1189161002
 GameObject:
@@ -2699,7 +2545,7 @@ MonoBehaviour:
   bottlePrefab: {fileID: 4391029338446301491, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
   bottleStorage: {fileID: 4405315668898170171}
   bottleDisplayer: {fileID: 4405315668884328699}
-  bottleCount: 10
+  bottleCount: 0
   thrust: 200
   currentState: 0
   initialState: 0
@@ -2715,6 +2561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b9ef5e61825704db56ab4f61f6a919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _bottlePrefab: {fileID: 4391029338446301491, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
   bottleManager: {fileID: 1257914417}
 --- !u!4 &1257914419
 Transform:
@@ -2967,36 +2814,47 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493232128}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5.4969993, y: -4.389799, z: -7.3843555}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_Father: {fileID: 1026445112}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1589738793 stripped
+--- !u!1 &1581108596
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4391029338446301491, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-  m_PrefabInstance: {fileID: 332276533}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1589738806 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8682611145592597170, guid: 446c309a1029f6540a3778c836ab114c, type: 3}
-  m_PrefabInstance: {fileID: 332276533}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1589738810
-MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1589738793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38823f373671fdb4c9bea401f371dcbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animBottle: {fileID: 1589738806}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1581108597}
+  m_Layer: 0
+  m_Name: Lights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1581108597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581108596}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1099196677}
+  - {fileID: 68741483}
+  - {fileID: 1037845084}
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1635896123
 GameObject:
   m_ObjectHideFlags: 0
@@ -3255,7 +3113,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1589738810}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BottleAnimatorController, Assembly-CSharp
         m_MethodName: BottleOpen
         m_Mode: 6
@@ -3557,7 +3415,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 621020998}
+      - m_Target: {fileID: 25952881}
+        m_TargetAssemblyTypeName: BottlePoster, Assembly-CSharp
+        m_MethodName: NewPost
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 243837541}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -3580,30 +3450,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1589738793}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 1589738810}
-        m_TargetAssemblyTypeName: BottleAnimatorController, Assembly-CSharp
-        m_MethodName: BottleOpen
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &1922018219
 MonoBehaviour:
@@ -3708,118 +3554,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e91d6d15f11cc4ad29bb1a41ae9aa381, type: 3}
---- !u!1 &1944022596
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1944022601}
-  - component: {fileID: 1944022600}
-  - component: {fileID: 1944022599}
-  - component: {fileID: 1944022598}
-  - component: {fileID: 1944022597}
-  m_Layer: 0
-  m_Name: Plane
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &1944022597
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944022596}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 10, y: 2.220446e-16, z: 10}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!64 &1944022598
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944022596}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1944022599
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944022596}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 36493e7bcf4db4148841f6c31aa1961c, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1944022600
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944022596}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1944022601
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944022596}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0013681054, y: 0.038238794, z: 0.5613033}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1969048450
 GameObject:
   m_ObjectHideFlags: 0
@@ -4309,18 +4043,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 25952881}
-        m_TargetAssemblyTypeName: BottlePoster, Assembly-CSharp
-        m_MethodName: NewPost
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 25952876}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -4333,7 +4055,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 621020998}
+      - m_Target: {fileID: 1257914417}
+        m_TargetAssemblyTypeName: BottleManager, Assembly-CSharp
+        m_MethodName: CloseSelectedBottle
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 243837541}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -4345,7 +4079,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1589738793}
+      - m_Target: {fileID: 761004847}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -4355,7 +4089,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &2120237930
 MonoBehaviour:
@@ -4403,7 +4137,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4405315668884328699}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.022000074, z: 0.61399996}
+  m_LocalPosition: {x: 0, y: 0, z: 0.61399996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4450,7 +4184,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4405315668898170170}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.567, z: 0}
+  m_LocalPosition: {x: 0, y: -1.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
