@@ -4,8 +4,8 @@ using UnityEngine;
 using TMPro;
 
     //To Do:
-    //Picks a random Question
-    //Displays question to the UI
+    //Picks a random Question *
+    //Displays question to the UI *
     //On button pressed checks if input text is empty
     //If input text is not empty, posts a bottle passing the question and Answer
 
@@ -24,17 +24,16 @@ public class BottlePoster : MonoBehaviour
     private TMP_Text questionText;
 
     [SerializeField]
-    private GameObject answerGameObject;
-    private TMP_Text answerText;
+    private TMP_InputField answerInput;
 
-
+    [SerializeField]
+    private GameObject cancelMessage;
     private void Awake()
     {
         questionsManager = gameManager.GetComponent<QuestionsManager>();
         bottleManager = gameManager.GetComponent<BottleManager>();
 
         questionText = questionGameObject.GetComponent<TMP_Text>();
-        answerText = answerGameObject.GetComponent<TMP_Text>();
     }
 
     private void OnEnable()
@@ -53,10 +52,30 @@ public class BottlePoster : MonoBehaviour
 
     public void NewPost()
     {
-        currentAnswer = answerText.text;
-
-        bottleManager.CreateNewBottle(currentQuestion, currentAnswer);
+        bottleManager.CreateNewBottle(questionsManager.RandomQuestion());
     }
+
+    public void PostAnswer()
+    {
+        if (answerInput.text == "")
+        {
+            CancelPost();
+        }
+
+        currentAnswer = answerInput.text.ToString();
+        bottleManager.PostBottle(currentAnswer);
+        answerInput.text = "";
+    }
+
+    public void CancelPost()
+    {
+        currentQuestion = null;
+        currentAnswer = null;
+        bottleManager.DestroyBottle();
+        answerInput.text = "";
+        cancelMessage.SetActive(true);
+    }
+
 
     private void OnDisable()
     {

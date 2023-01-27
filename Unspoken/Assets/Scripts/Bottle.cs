@@ -18,14 +18,20 @@ public class Bottle : MonoBehaviour
     //this value also exists on Bottle Manager, it would be better to have a gobal value that manages this
     private float thrust = 150;
 
+
     [SerializeField]
+    private GameObject messageGO;
+
     private GameObject questionGO;
-    [SerializeField]
     private GameObject answerGO;
-    [SerializeField]
+    
     private TMP_Text questionText;
-    [SerializeField]
     private TMP_Text answerText;
+
+    [SerializeField]
+    private string currentQuestion;
+    [SerializeField]
+    private string currentAnswer;
 
     private enum State { Idle, Open, Display, Close, Throw}
     [SerializeField]
@@ -40,8 +46,13 @@ public class Bottle : MonoBehaviour
 
     private void Awake()
     {
+        questionGO = messageGO.transform.GetChild(0).gameObject;
+        answerGO = messageGO.transform.GetChild(1).gameObject;
+
         questionText = questionGO.GetComponent<TMP_Text>();
         answerText = answerGO.GetComponent<TMP_Text>();
+
+        messageGO.SetActive(false);
 
         currentState = State.Idle;
         rigidBody = GetComponent<Rigidbody>();
@@ -53,21 +64,19 @@ public class Bottle : MonoBehaviour
         switch (currentState)
         {
             case State.Idle:
-                questionGO.SetActive(false);
-                answerGO.SetActive(false);
+                //animator.SetBool("Selected", false);
                 transform.Translate(Vector3.left * idleSpeed * Time.deltaTime);
                 break;
             case State.Open:
                 MoveTowardsPlayer();
+                //messageGO.SetActive(true);
                 break;
             case State.Display:
-                answerGO.SetActive(true);
                 //ARButton.SetActive(true);
                 break;
             case State.Close:
+                messageGO.SetActive(false);
                 animator.SetBool("Selected", false);
-                answerGO.SetActive(false);
-                questionGO.SetActive(false);
                 //ARButton.SetActive(false);
                 break;
             case State.Throw:
@@ -120,6 +129,9 @@ public class Bottle : MonoBehaviour
         transform.position = displayPoint.position;
         transform.rotation = displayPoint.rotation;
 
+        currentQuestion = question;
+        currentAnswer = answer;
+
         questionText.text = question;
         answerText.text = answer;
 
@@ -131,11 +143,33 @@ public class Bottle : MonoBehaviour
         ChangeState("Idle");
     }
 
-    public void Activate(GameObject displayerGO)
+    public void Activate(GameObject displayerGO, string question)
     {
         displayPoint = displayerGO.transform;
+        currentQuestion = question;
+        //currentAnswer = answer;
+
+        questionText.text = currentQuestion;
+        //answerText.text = currentAnswer;
+
         currentState = State.Open;
     }
+
+    public void Post(string answer)
+    {
+        currentAnswer = answer;
+
+        answerText.text = currentAnswer;
+    }
+
+
+    public void Select(GameObject displayerGO)
+    {
+        displayPoint = displayerGO.transform;
+
+        currentState = State.Open;
+    }
+
 
     public void ChangeState(string newStateName)
     {
@@ -143,6 +177,12 @@ public class Bottle : MonoBehaviour
 
         currentState = newState;
     }
+
+    public void DisplayMessage()
+    {
+        messageGO.SetActive(true);
+    }
+
     /*
     private void CreateBottleMatrix(out Matrix4x4 localPose)
     {

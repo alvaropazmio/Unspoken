@@ -9804,10 +9804,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 0}
-  questionGO: {fileID: 5979261333807121347}
-  answerGO: {fileID: 8778653851861263800}
-  questionText: {fileID: 0}
-  answerText: {fileID: 0}
+  messageGO: {fileID: 8733225858985063771}
+  questionGO: {fileID: 0}
+  answerGO: {fileID: 0}
+  currentQuestion: 
+  currentAnswer: 
   currentState: 0
 --- !u!114 &6839417496155915620
 MonoBehaviour:
@@ -24217,7 +24218,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8350730187303116217
 Transform:
   m_ObjectHideFlags: 0

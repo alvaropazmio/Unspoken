@@ -42,6 +42,7 @@ public class BottleManager : MonoBehaviour
 
     private QuestionsManager questionManager;
 
+    public UnityEvent onBottleSelected;
 
     private void Awake()
     {
@@ -50,7 +51,7 @@ public class BottleManager : MonoBehaviour
 
         for (int i = 0; i < bottleCount; i++)
         {
-            CreateNewBottle(" ERROR ", " ERROR ") ;
+            CreateNewBottle(" ERROR ") ;
         }
 
     }
@@ -79,7 +80,7 @@ public class BottleManager : MonoBehaviour
 
     
 
-    public void CreateNewBottle(string question, string answer)
+    public void CreateNewBottle(string question)
     {
         var bottleGO = Instantiate(bottlePrefab, bottleStorage.transform.position, Quaternion.identity);
         Bottle newBottle = bottleGO.GetComponent<Bottle>();
@@ -94,10 +95,9 @@ public class BottleManager : MonoBehaviour
         }
         else if (currentState == State.MainGame)
         {
-            newBottle.Activate(bottleDisplayer);
+            newBottle.Activate(bottleDisplayer, question);
             selectedBottle = newBottle;
             currentQuestion = question;
-            currentAnswer = answer;
             //newBottle.ThrowNew(bottleDisplayer,question,answer);
         }
 
@@ -116,6 +116,17 @@ public class BottleManager : MonoBehaviour
         if (selectedBottle != null)
         {
             selectedBottle.ThrowNew(bottleDisplayer, currentQuestion, currentAnswer);
+            selectedBottle = null;
+            currentQuestion = null;
+            currentAnswer = null;
+        }
+    }
+
+    public void DestroyBottle()
+    {
+        if (selectedBottle != null)
+        {
+            Destroy(selectedBottle.gameObject);
             selectedBottle = null;
             currentQuestion = null;
             currentAnswer = null;
@@ -204,12 +215,20 @@ public class BottleManager : MonoBehaviour
         {
 
             selectedBottle = bottleDictionary[hit.collider.gameObject];
-            selectedBottle.Activate(bottleDisplayer);
-        }
+            selectedBottle.Select(bottleDisplayer);
+            onBottleSelected.Invoke();
+        }/*
         else if (hit.collider.gameObject.tag == "ARButton")
         {
             selectedBottle.ChangeState("Close");
-        }
+        }*/
+    }
+
+
+    public void PostBottle(string answer)
+    {
+        selectedBottle.Post(answer);
+        CloseSelectedBottle();
     }
 
     public void ChangeState (string newStateName)
