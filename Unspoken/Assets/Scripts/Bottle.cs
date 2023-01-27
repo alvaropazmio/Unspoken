@@ -9,7 +9,7 @@ public class Bottle : MonoBehaviour
 {
     [HideInInspector]
     public Rigidbody rigidBody;
-    private Animator animator;
+    public Animator animator;
     
     private Transform displayPoint;
 

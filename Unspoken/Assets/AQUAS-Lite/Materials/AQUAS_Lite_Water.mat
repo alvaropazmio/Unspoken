@@ -106,7 +106,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrength: 2
-    - _NormalTiling: 0.106
+    - _NormalTiling: 0.201
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ProbeReflectionIntensity: 0.222
