@@ -38,7 +38,7 @@ public class BottlePoster : MonoBehaviour
 
     private void OnEnable()
     {
-
+        /*
         if (questionsManager != null)
         {
             currentQuestion = questionsManager.RandomQuestion();
@@ -47,12 +47,16 @@ public class BottlePoster : MonoBehaviour
         else
         {
             Debug.Log("Questions manager missing");
-        }
+        }*/
     }
 
     public void NewPost()
     {
-        bottleManager.CreateNewBottle(questionsManager.RandomQuestion());
+        currentQuestion = questionsManager.RandomQuestion();
+        questionText.text = currentQuestion;
+
+        bottleManager.CreateNewBottle(currentQuestion);
+
     }
 
     public void PostAnswer()
@@ -61,10 +65,12 @@ public class BottlePoster : MonoBehaviour
         {
             CancelPost();
         }
-
-        currentAnswer = answerInput.text.ToString();
-        bottleManager.PostBottle(currentAnswer);
-        answerInput.text = "";
+        else
+        {
+            currentAnswer = answerInput.text.ToString();
+            bottleManager.PostBottle(currentAnswer);
+            answerInput.text = "";
+        }
     }
 
     public void CancelPost()

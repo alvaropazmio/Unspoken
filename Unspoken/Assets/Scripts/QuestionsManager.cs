@@ -9,7 +9,8 @@ public class QuestionsManager : MonoBehaviour
 
     public List<string> questions = new List<string>();
 
-    private void Start()
+
+    private void Awake()
     {
         if (file != null)
         {
@@ -30,7 +31,12 @@ public class QuestionsManager : MonoBehaviour
 
     public string RandomQuestion()
     {
-        int randomIndex = Random.Range(0, questions.Count);
-        return questions[randomIndex];
+        if (questions.Count != 0)
+        {
+            int randomIndex = Random.Range(0, questions.Count);
+            Debug.Log(randomIndex);
+            return questions[randomIndex];
+
+        }else return null;
     }
 }

@@ -56,31 +56,47 @@ public class Bottle : MonoBehaviour
 
         currentState = State.Idle;
         rigidBody = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
     }
 
+    private void OnEnable()
+    {
+        AnimationEvents.bottleClosed += ThrowBack;
+        AnimationEvents.bottleOpened += DisplayMessage;
+    }
+
+    private void OnDisable()
+    {
+        AnimationEvents.bottleClosed -= ThrowBack;
+        AnimationEvents.bottleOpened -= DisplayMessage;
+
+    }
     private void Update()
     {
         switch (currentState)
         {
             case State.Idle:
-                //animator.SetBool("Selected", false);
+                animator.SetBool("Selected", false);
+                animator.SetBool("Open", false);
                 transform.Translate(Vector3.left * idleSpeed * Time.deltaTime);
                 break;
             case State.Open:
+                animator.SetBool("Selected", true);
+                animator.SetBool("Open", false);
                 MoveTowardsPlayer();
                 //messageGO.SetActive(true);
                 break;
             case State.Display:
+                animator.SetBool("Open", true);
                 //ARButton.SetActive(true);
                 break;
             case State.Close:
                 messageGO.SetActive(false);
                 animator.SetBool("Selected", false);
+                animator.SetBool("Open", false);
                 //ARButton.SetActive(false);
                 break;
             case State.Throw:
-                ThrowBack();
+                //ThrowBack();
                 break;
             default:
                 break;
@@ -114,6 +130,8 @@ public class Bottle : MonoBehaviour
 
     private void ThrowBack()
     {
+        ChangeState("Throw");
+
 
         rigidBody.isKinematic = false;
         rigidBody.useGravity = true;
@@ -149,7 +167,7 @@ public class Bottle : MonoBehaviour
         currentQuestion = question;
         //currentAnswer = answer;
 
-        questionText.text = currentQuestion;
+        questionText.text = question;
         //answerText.text = currentAnswer;
 
         currentState = State.Open;
@@ -157,6 +175,7 @@ public class Bottle : MonoBehaviour
 
     public void Post(string answer)
     {
+        
         currentAnswer = answer;
 
         answerText.text = currentAnswer;
@@ -165,6 +184,7 @@ public class Bottle : MonoBehaviour
 
     public void Select(GameObject displayerGO)
     {
+
         displayPoint = displayerGO.transform;
 
         currentState = State.Open;
@@ -180,7 +200,11 @@ public class Bottle : MonoBehaviour
 
     public void DisplayMessage()
     {
-        messageGO.SetActive(true);
+        if (currentAnswer != "")
+        {
+            messageGO.SetActive(true);
+
+        }
     }
 
     /*

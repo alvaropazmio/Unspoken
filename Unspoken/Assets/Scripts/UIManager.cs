@@ -14,9 +14,13 @@ public class UIManager : MonoBehaviour
     private GameObject mainCanvas;
     [SerializeField]
     private GameObject writingCanvas;
-
     [SerializeField]
-    private VPSStatus status;
+    private GameObject readingCanvas;
+
+    private GameObject currentCanvas;
+
+    //[SerializeField]
+    //private VPSStatus status;
     [SerializeField]
     private bool localized = false;
 
@@ -28,15 +32,18 @@ public class UIManager : MonoBehaviour
     public UnityEvent OnScanScreen;
 
     public UnityEvent OnMainGameScreen;
-
     private void OnEnable()
     {
         VPSStatus.OnLocalized += InitiateGameUI;
+
+        AnimationEvents.bottleOpened += OpenMessageCanvas;
     }
 
     private void OnDisable()
     {
         VPSStatus.OnLocalized -= InitiateGameUI;
+        AnimationEvents.bottleOpened -= OpenMessageCanvas;
+
     }
 
     private void Awake()
@@ -54,19 +61,38 @@ public class UIManager : MonoBehaviour
         //scanCanvasGroup.alpha = 0;
     }
 
+
     private void Start()
     {
         //welcome = false;
         StartCoroutine("FadeOutWelcome");
     }
 
-
-    private void Update()
+    public void SetCanvasToOpen(string canvasType)
     {
 
+        if (canvasType == "Writing")
+        {
+            currentCanvas = writingCanvas;
+        }
+        else if (canvasType == "Reading")
+        {
+            //currentCanvas = Canvas
+            currentCanvas = readingCanvas;
+        }
+        else Debug.Log("Check spelling");
     }
 
+    private void OpenMessageCanvas()
+    {
+        if (currentCanvas == null)
+        {
+            Debug.Log("no current canvas");
+            return;
+        }
 
+        currentCanvas.SetActive(true);
+    }
     IEnumerator FadeOutWelcome()
     {
         yield return StartCoroutine("FadeOut", welcomeCanvasGroup);
