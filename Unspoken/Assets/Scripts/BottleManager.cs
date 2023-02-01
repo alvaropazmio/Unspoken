@@ -60,6 +60,7 @@ public class BottleManager : MonoBehaviour
     {
         //BottleActions.OnBottleLoaded += CreateNewBottle;
         BottleActions.OnBottleLoaded += RegisterBottle;
+        BottleActions.OnBottleLoaded += DestroyDeadBottles;
         //VPSStatus.OnLocalized += SwitchToMainGame;
 
     }
@@ -68,6 +69,7 @@ public class BottleManager : MonoBehaviour
     {
         //BottleActions.OnBottleLoaded -= CreateNewBottle;
         BottleActions.OnBottleLoaded -= RegisterBottle;
+        BottleActions.OnBottleLoaded -= DestroyDeadBottles;
         //VPSStatus.OnLocalized -= SwitchToMainGame;
 
     }
@@ -78,7 +80,13 @@ public class BottleManager : MonoBehaviour
         currentState = State.MainGame;
     }
 
-    
+    private void DestroyDeadBottles(GameObject _bottle, string message)
+    {
+        if (!bottleDictionary.ContainsKey(_bottle))
+        {
+            Destroy(_bottle);
+        }
+    }
 
     public void CreateNewBottle(string question)
     {
@@ -133,9 +141,16 @@ public class BottleManager : MonoBehaviour
         }
     }
 
-    private void RegisterBottle(GameObject bottleGO)
+    private void RegisterBottle(GameObject bottleGO, string message)
     {
+        if (bottleGO == null || message == "")
+        {
+            Debug.Log("register non successfull = " + bottleGO.name + " " + message);
+            return;
+        }
         Bottle bottle = bottleGO.GetComponent<Bottle>();
+
+        bottle.RegisterMessage(message);
 
         bottlePool.Add(bottle);
         bottleDictionary.Add(bottleGO, bottle);

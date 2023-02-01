@@ -11,5 +11,5 @@ public static class BottleActions
     public static Action <GameObject> OnBottlePrefabSent;
 
     public static Action <Bottle> OnWayspotRequested;
-    public static Action <GameObject> OnBottleLoaded;
+    public static Action <GameObject, string> OnBottleLoaded;
 }

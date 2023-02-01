@@ -46,6 +46,7 @@ namespace Niantic.LightshipHub.Templates
     {
       public string[] Payloads = Array.Empty<string>();
       public string[] Messages = Array.Empty<string>();
+
     }
   }
 }
