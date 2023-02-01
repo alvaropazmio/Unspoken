@@ -33,6 +33,10 @@ public class Bottle : MonoBehaviour
     [SerializeField]
     private string currentAnswer;
 
+    [SerializeField]
+    public string encodedMessage;
+
+
     private enum State { Idle, Open, Display, Close, Throw}
     [SerializeField]
     private State currentState;
@@ -178,8 +182,9 @@ public class Bottle : MonoBehaviour
     {
         
         currentAnswer = answer;
-
         answerText.text = currentAnswer;
+
+        encodedMessage = currentQuestion + " + " + currentAnswer;
     }
 
 
@@ -206,6 +211,25 @@ public class Bottle : MonoBehaviour
             messageGO.SetActive(true);
 
         }
+    }
+
+    private string JoinQuestionAndAnswer()
+    {
+        encodedMessage = currentQuestion + currentAnswer;
+        return encodedMessage;
+    }
+
+    public void RegisterMessage(string message)
+    {
+        string[] messageArray = new string[2];
+
+        messageArray = message.Split(" + ");
+
+        currentQuestion = messageArray[0];
+        currentAnswer = messageArray[1];
+
+        questionText.text = currentQuestion;
+        answerText.text = currentAnswer;
     }
 
     /*
