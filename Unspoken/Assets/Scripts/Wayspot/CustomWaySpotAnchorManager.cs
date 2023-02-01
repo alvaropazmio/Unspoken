@@ -92,6 +92,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
     }
 
+
     private void HandleNewWayspot(Bottle newBottle)
     {
         //check if I can have this checkpoint for the wayspot anchor service
@@ -158,12 +159,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
         if (payloads.Count > 0)
         {
-            if (payloads.Count>100)
-            {
-                RestartWayspotAnchorService();
-                return;
-            }
-
+            
             for (int i = 0; i < payloads.Count; i++)
             {
                 var anchors = wayspotAnchorService.RestoreWayspotAnchors(payloads[i]);
