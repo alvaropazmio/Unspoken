@@ -1,3 +1,5 @@
+//Sanpshot before trying to implement messages
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ using Niantic.ARDK.LocationService;
 using Niantic.ARDK.Utilities;
 using Niantic.ARDK.Utilities.Input.Legacy;
 using Niantic.ARDKExamples.WayspotAnchors;
+using Niantic.LightshipHub.Templates;
 using UnityEngine;
 using UnityEngine.UI;
 
