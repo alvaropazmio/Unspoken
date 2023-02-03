@@ -759,7 +759,7 @@ GameObject:
   - component: {fileID: 248349132}
   - component: {fileID: 248349131}
   m_Layer: 0
-  m_Name: Reset Anchors
+  m_Name: BackToWelcome
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -829,28 +829,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1257914418}
-        m_TargetAssemblyTypeName: CustomWaySpotAnchorManager, Assembly-CSharp
-        m_MethodName: ClearAnchorGameObjects
-        m_Mode: 1
+      - m_Target: {fileID: 761004854}
+        m_TargetAssemblyTypeName: TutorialManager, Assembly-CSharp
+        m_MethodName: SwitchScenes
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1257914418}
-        m_TargetAssemblyTypeName: CustomWaySpotAnchorManager, Assembly-CSharp
-        m_MethodName: LoadWayspotAnchors
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: WelcomeScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &248349132
@@ -1517,6 +1505,7 @@ GameObject:
   - component: {fileID: 761004850}
   - component: {fileID: 761004853}
   - component: {fileID: 761004849}
+  - component: {fileID: 761004854}
   m_Layer: 0
   m_Name: Status Canvas
   m_TagString: Untagged
@@ -1634,6 +1623,18 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &761004854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 761004847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f74c1c4e8d2aa3e4fadd801df44ab5a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &861896761
 GameObject:
   m_ObjectHideFlags: 0
@@ -3052,8 +3053,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9900a91b8a8504c9c8dfeedaf9a5cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  file: {fileID: 4900000, guid: f6f581a893c573d4481f925474465208, type: 3}
+  QuestionsFile: {fileID: 4900000, guid: f6f581a893c573d4481f925474465208, type: 3}
+  MU_AnswersFile: {fileID: 4900000, guid: a88a6c9876ff97c438c9311fda6dfa53, type: 3}
   questions: []
+  mu_Answers: []
 --- !u!114 &1257914423
 MonoBehaviour:
   m_ObjectHideFlags: 0

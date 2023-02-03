@@ -39,11 +39,6 @@ public class Bottle : MonoBehaviour
 
     private bool wayspotEnabled = false;
 
-    //public delegate void WayspotCreator(Matrix4x4 localPose);
-    //public event WayspotCreator WayspotCreated;
-
-
-
     private void Awake()
     {
         questionGO = messageGO.transform.GetChild(0).gameObject;
@@ -208,15 +203,17 @@ public class Bottle : MonoBehaviour
         }
     }
 
-    /*
-    private void CreateBottleMatrix(out Matrix4x4 localPose)
+
+    public void LoadMUMessage(string message)
     {
-        localPose =
-            Matrix4x4.TRS
-            (
-                transform.position,
-                transform.rotation,
-                transform.localScale
-            );
-    }*/
+        string[] messageArray = new string[2];
+
+        messageArray = message.Split(" + ");
+
+        currentQuestion = messageArray[0];
+        currentAnswer = messageArray[1];
+
+        questionText.text = currentQuestion;
+        answerText.text = currentAnswer;
+    }
 }

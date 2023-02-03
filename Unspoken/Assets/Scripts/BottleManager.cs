@@ -15,6 +15,9 @@ public class BottleManager : MonoBehaviour
     private Transform bottleStorage;
     [SerializeField]
     private GameObject bottleDisplayer;
+    
+    private QuestionsManager questionsManager;
+
     private Bottle selectedBottle;
 
     private string currentQuestion;
@@ -40,12 +43,11 @@ public class BottleManager : MonoBehaviour
     public State currentState;
     public State initialState;
 
-    private QuestionsManager questionManager;
-
     public UnityEvent onBottleSelected;
 
     private void Awake()
     {
+        questionsManager = GetComponent<QuestionsManager>();
         //BottleActions.OnBottlePrefabSent(bottlePrefab);
         currentState = initialState;
 
@@ -59,7 +61,7 @@ public class BottleManager : MonoBehaviour
     private void OnEnable()
     {
         //BottleActions.OnBottleLoaded += CreateNewBottle;
-        BottleActions.OnBottleLoaded += RegisterBottle;
+        BottleActions.OnBottleLoaded += RegisterLoadedBottle;
         //VPSStatus.OnLocalized += SwitchToMainGame;
 
     }
@@ -67,7 +69,7 @@ public class BottleManager : MonoBehaviour
     private void OnDisable()
     {
         //BottleActions.OnBottleLoaded -= CreateNewBottle;
-        BottleActions.OnBottleLoaded -= RegisterBottle;
+        BottleActions.OnBottleLoaded -= RegisterLoadedBottle;
         //VPSStatus.OnLocalized -= SwitchToMainGame;
 
     }
@@ -133,14 +135,16 @@ public class BottleManager : MonoBehaviour
         }
     }
 
-    private void RegisterBottle(GameObject bottleGO)
+    private void RegisterLoadedBottle(GameObject bottleGO)
     {
         Bottle bottle = bottleGO.GetComponent<Bottle>();
 
         bottlePool.Add(bottle);
         bottleDictionary.Add(bottleGO, bottle);
-    }
 
+        bottle.LoadMUMessage(questionsManager.RandomQuestion(true));
+    }
+    
     private void Update()
     {
         /*
@@ -237,4 +241,6 @@ public class BottleManager : MonoBehaviour
 
         currentState = newState;
     }
+
+
 }
