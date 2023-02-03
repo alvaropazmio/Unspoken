@@ -76,7 +76,7 @@ public class Bottle : MonoBehaviour
                 transform.Translate(Vector3.left * idleSpeed * Time.deltaTime);
                 break;
             case State.Open:
-                animator.SetBool("Selected", true);
+                //animator.SetBool("Selected", true);
                 animator.SetBool("Open", false);
                 MoveTowardsPlayer();
                 //messageGO.SetActive(true);
