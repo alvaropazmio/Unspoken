@@ -52,7 +52,7 @@ public class BottlePoster : MonoBehaviour
 
     public void NewPost()
     {
-        currentQuestion = questionsManager.RandomQuestion();
+        currentQuestion = questionsManager.RandomQuestion(false);
         questionText.text = currentQuestion;
 
         bottleManager.CreateNewBottle(currentQuestion);
