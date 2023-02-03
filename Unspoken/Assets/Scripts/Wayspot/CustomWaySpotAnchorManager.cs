@@ -1,21 +1,19 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
+using Niantic.ARDK;
 using Niantic.ARDK.AR;
 using Niantic.ARDK.AR.ARSessionEventArgs;
-using Niantic.ARDK.Utilities;
-
+using Niantic.ARDK.AR.HitTest;
 using Niantic.ARDK.AR.WayspotAnchors;
 using Niantic.ARDK.Extensions;
 using Niantic.ARDK.LocationService;
-
+using Niantic.ARDK.Utilities;
+using Niantic.ARDK.Utilities.Input.Legacy;
 using Niantic.ARDKExamples.WayspotAnchors;
-using Niantic.LightshipHub.Templates;
 using UnityEngine;
-using static Niantic.LightshipHub.Templates.LeaveMessagesUtility;
+using UnityEngine.UI;
 
 public class CustomWaySpotAnchorManager : MonoBehaviour
 {
@@ -27,18 +25,13 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
     private IWayspotAnchorsConfiguration _config;
 
-    private readonly HashSet<WayspotAnchorTracker> _wayspotAnchorTrackers = 
-        new HashSet<WayspotAnchorTracker>();
+    private readonly HashSet<WayspotAnchorTracker> _wayspotAnchorTrackers = new HashSet<WayspotAnchorTracker>();
     private HashSet<IWayspotAnchor[]> _savedAnchorTrackers = new HashSet<IWayspotAnchor[]>();
-
-    private List<string> _wayspotAnchorMessages = new List<string>();
 
     public delegate void TextUpdateHandler(string localisationStatus);
     public event TextUpdateHandler Updated;
 
     private string _localisationStatus;
-
-
 
     [SerializeField]
     private BottleManager bottleManager;
@@ -92,7 +85,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
     }
 
-
     private void HandleNewWayspot(Bottle newBottle)
     {
         //check if I can have this checkpoint for the wayspot anchor service
@@ -117,64 +109,45 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
     public void SaveWayspotAnchors()
     {
-        var wayspotData = new LeaveMessagesUtility.MessagesData();
-
         if(_wayspotAnchorTrackers.Count > 0)
         {
             var wayspotAnchors = wayspotAnchorService.GetAllWayspotAnchors();
-            var payloads = wayspotAnchors.Select(a => a.Payload);
-            //var savableAnchors = wayspotAnchors.Where(a => a.Status == WayspotAnchorStatusCode.Limited || a.Status == WayspotAnchorStatusCode.Success);
-            //var payloads = savableAnchors.Select(a => a.Payload);
 
-            wayspotData.Payloads = payloads.Select(a => a.Serialize()).ToArray();
-            wayspotData.Messages = _wayspotAnchorMessages.ToArray();
-            
+            var savableAnchors = wayspotAnchors.Where(a => a.Status == WayspotAnchorStatusCode.Limited || a.Status == WayspotAnchorStatusCode.Success);
+            var payloads = savableAnchors.Select(a => a.Payload);
             Debug.Log("Array Payload = " + payloads.Count());
-            //WayspotAnchorDataUtility.SaveLocalPayloads(payloads.ToArray());
-            //_savedAnchorTrackers.Add(wayspotAnchors);
+            WayspotAnchorDataUtility.SaveLocalPayloads(payloads.ToArray());
+            _savedAnchorTrackers.Add(wayspotAnchors);
         }
         else
         {
             WayspotAnchorDataUtility.SaveLocalPayloads(Array.Empty<WayspotAnchorPayload>());
         }
-
-        LeaveMessagesUtility.SaveLocalMessages(wayspotData);
         UpdateLocalisationStatus($"Saved {_wayspotAnchorTrackers.Count} Wayspot Anchors.");
     }
 
     public void LoadWayspotAnchors()
     {
-        var _messagesData = LeaveMessagesUtility.LoadLocalMessages();
-
-
-
-        var messages = _messagesData.Messages;
-        var payloads = new List<WayspotAnchorPayload>();
-
-        foreach (var wayspotAnchorPayload in _messagesData.Payloads)
+        var payloads = WayspotAnchorDataUtility.LoadLocalPayloads();
+        if (payloads.Length > 0)
         {
-            var payload = WayspotAnchorPayload.Deserialize(wayspotAnchorPayload);
-            payloads.Add(payload);
-        }
-
-        if (payloads.Count > 0)
-        {
-            
-            for (int i = 0; i < payloads.Count; i++)
+            foreach(var payload in payloads)
             {
-                var anchors = wayspotAnchorService.RestoreWayspotAnchors(payloads[i]);
+                var anchors = wayspotAnchorService.RestoreWayspotAnchors(payload);
                 if (anchors.Length == 0)
                 {
                     Debug.Log("error raised in CreateWayspotAnchors");
-                    return;
+                    return; 
                 }
-                CreateLoadedGameObject(anchors[0], Vector3.zero, Quaternion.identity, true, messages[i]);
+
+                CreateLoadedGameObject(anchors[0], Vector3.zero, Quaternion.identity, true);
             }
-        
+            //UpdateLocalisationStatus($"Loaded {_wayspotAnchorTrackers.Count} anchors.");
+            Debug.Log($"Ammount of anchors in payload: {payloads.Count()}");
         }
         else
         {
-            Debug.Log("No messages to load");
+            UpdateLocalisationStatus("No anchors to load");
         }
     }
 
@@ -183,28 +156,36 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
             IWayspotAnchor anchor,
             Vector3 position,
             Quaternion rotation,
-            bool startActive,
-            string message 
+            bool startActive
         )
     {
+        if (position ==  null || rotation == null || _bottlePrefab == null)
+        {
+            Debug.Log("no");
+            return null;
+        }
 
 
         var go = Instantiate(_bottlePrefab, position, rotation);
 
+        if (go == null)
+        {
+            Debug.Log("here");
+            return null;
+        }
         var tracker = go.GetComponent<WayspotAnchorTracker>();
         if (tracker == null)
         {
             Debug.Log("Anchor prefab was missing WayspotAnchorTracker, so one will be added.");
             tracker = go.AddComponent<WayspotAnchorTracker>();
-            //return null;
+            return null;
         }
 
         tracker.gameObject.SetActive(startActive);
         tracker.AttachAnchor(anchor);
         _wayspotAnchorTrackers.Add(tracker);
-        _wayspotAnchorMessages.Add(message);
 
-        BottleActions.OnBottleLoaded(go, message);
+        BottleActions.OnBottleLoaded(go);
 
         return go;
     }
@@ -212,14 +193,10 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
     
     public void RestartWayspotAnchorService()
     {
-
-
+        ClearAnchorGameObjects();
         wayspotAnchorService.Restart();
         WayspotAnchorDataUtility.ClearLocalPayloads();
 
-        
-
-        ClearAnchorGameObjects();
         UpdateLocalisationStatus("Wayspot Anchor Service Restarted");
     }
 
@@ -233,22 +210,18 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         }
 
         foreach (var anchor in _wayspotAnchorTrackers)
-        {
             Destroy(anchor.gameObject);
-        }
-        _wayspotAnchorMessages = new List<string>();
 
         var wayspotAnchor = _wayspotAnchorTrackers.Select(go => go.WayspotAnchor).ToArray();
         wayspotAnchorService.DestroyWayspotAnchors(wayspotAnchor);
 
         _wayspotAnchorTrackers.Clear();
-        _wayspotAnchorMessages.Clear();
         UpdateLocalisationStatus("Cleared Wayspot Anchors");
     }
 
 
 
-    private void PlaceAnchor(Matrix4x4 localPose, GameObject bottleGO)
+    private void PlaceAnchor(Matrix4x4 localPose, GameObject bottle)
     {
         var anchors = wayspotAnchorService.CreateWayspotAnchors(localPose);
         if (anchors == null)
@@ -256,23 +229,14 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         if (anchors.Length == 0)
             return; //error raised in CreateWayspotAnchors
 
-        var bottle = bottleGO.GetComponent<Bottle>();
-
-
-        CreateWayspotTracker(anchors[0], bottleGO, true, bottle.encodedMessage);
+        CreateWayspotTracker(anchors[0], bottle, true);
 
 
         UpdateLocalisationStatus("Anchor placed... well done btw <3");
         SaveWayspotAnchors();
     }
 
-    private void CreateWayspotTracker 
-        (
-         IWayspotAnchor anchor, 
-         GameObject bottle, 
-         bool startActive,
-         string message
-        )
+    private void CreateWayspotTracker (IWayspotAnchor anchor, GameObject bottle, bool startActive)
     {
         var tracker = bottle.GetComponent<WayspotAnchorTracker>();
         if (tracker == null)
@@ -284,7 +248,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         tracker.gameObject.SetActive(startActive);
         tracker.AttachAnchor(anchor);
         _wayspotAnchorTrackers.Add(tracker);
-        _wayspotAnchorMessages.Add(message);
     }
 
     private void HandleSessionInitialized(AnyARSessionInitializedArgs args)
@@ -299,7 +262,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         _arSession.Ran -= HandleSessionRan;
         wayspotAnchorService = CreateWaySpotAnchorService();
         wayspotAnchorService.LocalizationStateUpdated += OnLocalizationStateUpdate;
-        UpdateLocalisationStatus("Session Initialized");
+        UpdateLocalisationStatus("Session running");
     }
 
     private void OnLocalizationStateUpdate(LocalizationStateUpdatedArgs args)
