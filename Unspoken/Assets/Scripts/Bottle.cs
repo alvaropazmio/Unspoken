@@ -206,6 +206,8 @@ public class Bottle : MonoBehaviour
 
     public void LoadMUMessage(string message)
     {
+        animator.SetBool("Loaded", true);
+
         string[] messageArray = new string[2];
 
         messageArray = message.Split(" + ");
