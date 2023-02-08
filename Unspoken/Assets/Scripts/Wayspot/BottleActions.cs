@@ -1,3 +1,8 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Static class that listens to important actions from the //
+//bottles and alerts other scripts                                 //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

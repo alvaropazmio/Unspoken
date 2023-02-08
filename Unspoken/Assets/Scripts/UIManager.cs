@@ -1,3 +1,7 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Manages the UI's visual effects                         //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
 using Niantic.ARDK.Utilities.Input.Legacy;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +10,9 @@ using UnityEngine.Events;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField]
+    private bool localized = false;
+
     [SerializeField]
     private GameObject welcomeCanvas;
     [SerializeField]
@@ -16,26 +23,18 @@ public class UIManager : MonoBehaviour
     private GameObject writingCanvas;
     [SerializeField]
     private GameObject readingCanvas;
-
     private GameObject currentCanvas;
 
-    //[SerializeField]
-    //private VPSStatus status;
-    [SerializeField]
-    private bool localized = false;
-
-    private bool welcome = true;
     private CanvasGroup welcomeCanvasGroup;
     private CanvasGroup scanCanvasGroup;
 
     public UnityEvent OnWelcomeScreen;
     public UnityEvent OnScanScreen;
-
     public UnityEvent OnMainGameScreen;
+
     private void OnEnable()
     {
         VPSStatus.OnLocalized += InitiateGameUI;
-
         AnimationEvents.bottleOpened += OpenMessageCanvas;
     }
 
@@ -43,41 +42,30 @@ public class UIManager : MonoBehaviour
     {
         VPSStatus.OnLocalized -= InitiateGameUI;
         AnimationEvents.bottleOpened -= OpenMessageCanvas;
-
     }
 
     private void Awake()
     {
         OnWelcomeScreen.Invoke();
 
-        /*welcomeCanvas.SetActive(true);
-        scanCanvas.SetActive(false);
-        mainCanvas.SetActive(false);
-        writingCanvas.SetActive(false);
-        */
         welcomeCanvasGroup = welcomeCanvas.GetComponent<CanvasGroup>();
-        //welcomeCanvasGroup.alpha = 1;
         scanCanvasGroup = scanCanvas.GetComponent<CanvasGroup>();
-        //scanCanvasGroup.alpha = 0;
     }
 
 
     private void Start()
     {
-        //welcome = false;
         StartCoroutine("FadeOutWelcome");
     }
 
     public void SetCanvasToOpen(string canvasType)
     {
-
         if (canvasType == "Writing")
         {
             currentCanvas = writingCanvas;
         }
         else if (canvasType == "Reading")
         {
-            //currentCanvas = Canvas
             currentCanvas = readingCanvas;
         }
         else Debug.Log("Check spelling");

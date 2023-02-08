@@ -1,3 +1,8 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Class that houses all the functionallity and data for   //
+//the bottles                                                      //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
 using Niantic.ARDK.Utilities.Input.Legacy;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,8 +19,6 @@ public class Bottle : MonoBehaviour
     private Transform displayPoint;
 
     private float approachVelocity = 0.1f;
-    private float idleSpeed = 0.06f;
-    //this value also exists on Bottle Manager, it would be better to have a gobal value that manages this
     private float thrust = 150;
 
 
@@ -41,6 +44,8 @@ public class Bottle : MonoBehaviour
 
     private void Awake()
     {
+        rigidBody = GetComponent<Rigidbody>();
+        
         questionGO = messageGO.transform.GetChild(0).gameObject;
         answerGO = messageGO.transform.GetChild(1).gameObject;
 
@@ -50,7 +55,6 @@ public class Bottle : MonoBehaviour
         messageGO.SetActive(false);
 
         currentState = State.Idle;
-        rigidBody = GetComponent<Rigidbody>();
     }
 
     private void OnEnable()
@@ -67,36 +71,32 @@ public class Bottle : MonoBehaviour
     }
     private void Update()
     {
+        #region State switch statement
         switch (currentState)
         {
             case State.Idle:
                 animator.SetBool("Selected", false);
                 animator.SetBool("Open", false);
                 messageGO.SetActive(false);
-                transform.Translate(Vector3.left * idleSpeed * Time.deltaTime);
                 break;
             case State.Open:
-                //animator.SetBool("Selected", true);
                 animator.SetBool("Open", false);
                 MoveTowardsPlayer();
-                //messageGO.SetActive(true);
                 break;
             case State.Display:
                 animator.SetBool("Open", true);
-                //ARButton.SetActive(true);
                 break;
             case State.Close:
                 messageGO.SetActive(false);
                 animator.SetBool("Selected", false);
                 animator.SetBool("Open", false);
-                //ARButton.SetActive(false);
                 break;
             case State.Throw:
-                //ThrowBack();
                 break;
             default:
                 break;
         }
+        #endregion
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -128,7 +128,6 @@ public class Bottle : MonoBehaviour
     {
         ChangeState("Throw");
 
-
         rigidBody.isKinematic = false;
         rigidBody.useGravity = true;
 
@@ -157,32 +156,27 @@ public class Bottle : MonoBehaviour
         ChangeState("Idle");
     }
 
+    //This function is called when the bottle is first loaded, Activation in this context is giving a bottle an answer
     public void Activate(GameObject displayerGO, string question)
     {
         displayPoint = displayerGO.transform;
         currentQuestion = question;
-        //currentAnswer = answer;
 
         questionText.text = question;
-        //answerText.text = currentAnswer;
 
         currentState = State.Open;
     }
-
-    public void Post(string answer)
-    {
-        
+ 
+    public void SavePost(string answer)
+    {    
         currentAnswer = answer;
-
         answerText.text = currentAnswer;
     }
 
 
     public void Select(GameObject displayerGO)
     {
-
         displayPoint = displayerGO.transform;
-
         currentState = State.Open;
     }
 
@@ -190,16 +184,15 @@ public class Bottle : MonoBehaviour
     public void ChangeState(string newStateName)
     {
         State newState = (State)System.Enum.Parse(typeof(State), newStateName);
-
         currentState = newState;
     }
 
+    //Makes sure only bottles with questions and answers are able to be displayed
     public void DisplayMessage()
     {
         if (currentAnswer != "")
         {
             messageGO.SetActive(true);
-
         }
     }
 

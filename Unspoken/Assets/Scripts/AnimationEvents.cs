@@ -1,3 +1,9 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Class housing events related to the bottle animation    //
+//not written in BottleActions.cs because these functions must be  //
+//selected on the editor.                                          //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using System;

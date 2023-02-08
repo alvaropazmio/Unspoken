@@ -1,3 +1,8 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Behaivor of "Post Cancelled" message                    //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

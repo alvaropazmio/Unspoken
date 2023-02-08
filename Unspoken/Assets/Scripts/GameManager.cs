@@ -1,3 +1,9 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Manager which initializes other managers when needed    //
+//Needed for Bottle Manager must be disabled until localization    //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

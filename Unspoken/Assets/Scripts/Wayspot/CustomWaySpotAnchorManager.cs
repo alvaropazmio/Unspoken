@@ -1,5 +1,9 @@
-//Sanpshot before trying to implement messages
-
+/////////////////////////////////////////////////////////////////////
+//Purpose: Main manager in chage of the localisation aspect and the//
+//saving and loading of anchors                                    //
+//Developer: Alvaro Pazmiño                                         
+//Based on: Lightship's WayspotAnchorManager                       // 
+/////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +25,12 @@ using UnityEngine.UI;
 public class CustomWaySpotAnchorManager : MonoBehaviour
 {
     [SerializeField]
+    private BottleManager bottleManager;
+    [SerializeField]
     private GameObject _bottlePrefab;
 
     private IARSession _arSession;
     public WayspotAnchorService wayspotAnchorService;
-
     private IWayspotAnchorsConfiguration _config;
 
     private readonly HashSet<WayspotAnchorTracker> _wayspotAnchorTrackers = new HashSet<WayspotAnchorTracker>();
@@ -36,32 +41,23 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
     private string _localisationStatus;
 
-    [SerializeField]
-    private BottleManager bottleManager;
+
 
     private void Awake()
     {
-        //Remember to set a user ID for launch
-        //var userId = GetCurrentUserId();
-        //ArdkGlobalConfig.SetUserIdOnLogin(userId);
-        //UpdateLocalisationStatus("Initializing Session...");
     }
 
     private void OnEnable()
     {
         ARSessionFactory.SessionInitialized += HandleSessionInitialized;
-
         BottleActions.OnBottlePrefabSent += RecievePrefab;
-        //!!!!! find a better place
         BottleActions.OnWayspotRequested += HandleNewWayspot;
     }
 
     private void OnDisable()
     {
         ARSessionFactory.SessionInitialized -= HandleSessionInitialized;
-
         BottleActions.OnBottlePrefabSent -= RecievePrefab;
-        //!!!!! find a better place
         BottleActions.OnWayspotRequested -= HandleNewWayspot;
 
     }
@@ -90,11 +86,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
     private void HandleNewWayspot(Bottle newBottle)
     {
-        //check if I can have this checkpoint for the wayspot anchor service
-        /*if (wayspotAnchorService == null)
-            Debug.Log("Something went wrong");
-            return;
-        */
         if (wayspotAnchorService.LocalizationState == LocalizationState.Localized)
         {
             var localPose =
@@ -104,9 +95,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
                     newBottle.transform.rotation,
                     newBottle.transform.localScale
                 );
-
             PlaceAnchor(localPose, newBottle.gameObject);
-
         }
     }
 
@@ -145,7 +134,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
                 CreateLoadedGameObject(anchors[0], Vector3.zero, Quaternion.identity, true);
             }
-            //UpdateLocalisationStatus($"Loaded {_wayspotAnchorTrackers.Count} anchors.");
             Debug.Log($"Ammount of anchors in payload: {payloads.Count()}");
         }
         else
@@ -162,25 +150,10 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
             bool startActive
         )
     {
-        if (position ==  null || rotation == null || _bottlePrefab == null)
-        {
-            Debug.Log("no");
-            return null;
-        }
-
-
         var go = Instantiate(_bottlePrefab, position, rotation);
-
-        if (go == null)
-        {
-            Debug.Log("here");
-            return null;
-        }
         var tracker = go.GetComponent<WayspotAnchorTracker>();
         if (tracker == null)
         {
-            Debug.Log("Anchor prefab was missing WayspotAnchorTracker, so one will be added.");
-            tracker = go.AddComponent<WayspotAnchorTracker>();
             return null;
         }
 
@@ -193,7 +166,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         return go;
     }
 
-    
     public void RestartWayspotAnchorService()
     {
         ClearAnchorGameObjects();
@@ -202,7 +174,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
 
         UpdateLocalisationStatus("Wayspot Anchor Service Restarted");
     }
-
     
     public void ClearAnchorGameObjects()
     {
@@ -222,8 +193,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         UpdateLocalisationStatus("Cleared Wayspot Anchors");
     }
 
-
-
     private void PlaceAnchor(Matrix4x4 localPose, GameObject bottle)
     {
         var anchors = wayspotAnchorService.CreateWayspotAnchors(localPose);
@@ -235,7 +204,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         CreateWayspotTracker(anchors[0], bottle, true);
 
 
-        UpdateLocalisationStatus("Anchor placed... well done btw <3");
+        UpdateLocalisationStatus("Anchor placed but not saved");
         SaveWayspotAnchors();
     }
 
@@ -244,7 +213,7 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         var tracker = bottle.GetComponent<WayspotAnchorTracker>();
         if (tracker == null)
         {
-            Debug.Log("Anchor prefab was missing WayspotAnchorTracher, so one will be added.");
+            Debug.Log("Anchor prefab was missing WayspotAnchorTracher, so one will be added. Anchor prefab was missing WayspotAnchorTracker, so one will be added. Please consider adding a WayspotAnchorTracker to the Prefab");
             tracker = bottle.AddComponent<WayspotAnchorTracker>();
         }
 
@@ -253,6 +222,8 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         _wayspotAnchorTrackers.Add(tracker);
     }
 
+
+    #region Handling of AR Session
     private void HandleSessionInitialized(AnyARSessionInitializedArgs args)
     {
         UpdateLocalisationStatus("Session Initialized");
@@ -271,7 +242,6 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
     private void OnLocalizationStateUpdate(LocalizationStateUpdatedArgs args)
     {
         UpdateLocalisationStatus(args.State.ToString());
-
     }
 
     private WayspotAnchorService CreateWaySpotAnchorService()
@@ -305,4 +275,5 @@ public class CustomWaySpotAnchorManager : MonoBehaviour
         _localisationStatus = newStatus;
         Updated?.Invoke(newStatus);
     }
+    #endregion
 }

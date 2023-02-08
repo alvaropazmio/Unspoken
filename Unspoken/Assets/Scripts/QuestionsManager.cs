@@ -1,3 +1,8 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Manager which reads and Lists questions from a text file//
+//temporarilly houses the MockUp answers as well                   //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,9 +43,7 @@ public class QuestionsManager : MonoBehaviour
         var Lines = file.text.Split(splitFile, System.StringSplitOptions.RemoveEmptyEntries);
         for (int i = 0; i < Lines.Length; i++)
         {
-            //Debug.Log(fileToList.Keys);
             fileToList[file.name].Add(Lines[i]);
-            //questions.Add(Lines[i]);
         }
     }
 
@@ -50,14 +53,12 @@ public class QuestionsManager : MonoBehaviour
         if (questions.Count != 0)
         {
             int randomIndex = Random.Range(0, questions.Count);
-            //Debug.Log(randomIndex);
             if (mockup)
             {
                 return questions[randomIndex] + " + " + mu_Answers[randomIndex];
             }
-
             return questions[randomIndex];
-
-        }else return null;
+        }
+        else return null;
     }
 }

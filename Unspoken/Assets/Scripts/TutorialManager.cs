@@ -1,3 +1,8 @@
+/////////////////////////////////////////////////////////////////////
+//Purpose: Manager for the opening screen -to be expanded-         //
+//Developer: Alvaro Pazmiño                                        //
+/////////////////////////////////////////////////////////////////////
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
